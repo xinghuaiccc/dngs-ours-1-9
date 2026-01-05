@@ -169,7 +169,11 @@ class GaussianModel:
     def create_from_pcd(self, pcd : BasicPointCloud, spatial_lr_scale : float):
         self.spatial_lr_scale = spatial_lr_scale
         fused_point_cloud = torch.tensor(np.asarray(pcd.points)).float().cuda()
-        fused_color = RGB2SH(torch.tensor(np.asarray(pcd.colors)).float().cuda())
+        colors_np = np.asarray(pcd.colors) if hasattr(pcd, "colors") else None
+        if colors_np is None or colors_np.shape[0] != fused_point_cloud.shape[0]:
+            print("[Warning] Point cloud has no valid colors, initializing to zeros.")
+            colors_np = np.zeros((fused_point_cloud.shape[0], 3), dtype=np.float32)
+        fused_color = RGB2SH(torch.tensor(colors_np).float().cuda())
         features = torch.zeros((fused_color.shape[0], 3, (self.max_sh_degree + 1) ** 2)).float().cuda()
         features[:, :3, 0 ] = fused_color
         features[:, 3:, 1:] = 0.0
@@ -182,7 +186,20 @@ class GaussianModel:
         rots = torch.zeros((fused_point_cloud.shape[0], 4), device="cuda")
         rots[:, 0] = 1
 
-        opacities = inverse_sigmoid(0.1 * torch.ones((fused_point_cloud.shape[0], 1), dtype=torch.float, device="cuda"))
+        num_points = fused_point_cloud.shape[0]
+        colmap_count = min(10000, num_points)
+        if num_points > colmap_count:
+            opacities = torch.empty((num_points, 1), dtype=torch.float, device="cuda")
+            opacities[:colmap_count] = inverse_sigmoid(
+                torch.full((colmap_count, 1), 0.1, dtype=torch.float, device="cuda")
+            )
+            opacities[colmap_count:] = inverse_sigmoid(
+                torch.full((num_points - colmap_count, 1), 0.01, dtype=torch.float, device="cuda")
+            )
+        else:
+            opacities = inverse_sigmoid(
+                0.1 * torch.ones((num_points, 1), dtype=torch.float, device="cuda")
+            )
 
         self._xyz = nn.Parameter(fused_point_cloud.requires_grad_(True))
         self._features_dc = nn.Parameter(features[:,:,0:1].transpose(1, 2).contiguous().requires_grad_(True))
@@ -618,4 +635,3 @@ class GaussianModel:
         prune_mask = (self.get_opacity < min_opacity).squeeze()
         self.prune_points(prune_mask)
         torch.cuda.empty_cache()
-

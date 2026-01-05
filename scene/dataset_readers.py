@@ -260,7 +260,12 @@ def readColmapSceneInfo(path, images, dataset, eval, rand_pcd, mvs_pcd, llffhold
         assert os.path.exists(ply_path)
         pcd = fetchPly(ply_path)
     else:
-        ply_path = os.path.join(path, "sparse/0/points3D.ply")
+        fused_ply_path = os.path.join(path, "points3D_fused.ply")
+        if os.path.exists(fused_ply_path):
+            ply_path = fused_ply_path
+            print("Loaded Fused Point Cloud for Initialization")
+        else:
+            ply_path = os.path.join(path, "sparse/0/points3D.ply")
         bin_path = os.path.join(path, "sparse/0/points3D.bin")
         txt_path = os.path.join(path, "sparse/0/points3D.txt")
         if not os.path.exists(ply_path):
