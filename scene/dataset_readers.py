@@ -37,6 +37,7 @@ class CameraInfo(NamedTuple):
     width: int
     height: int
     depth_mono: np.array
+    depth_anything_map: torch.Tensor = None
 
 class SceneInfo(NamedTuple):
     point_cloud: BasicPointCloud
@@ -127,7 +128,8 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
         depth_mono = Image.open(depth_mono_path)
 
         cam_info = CameraInfo(uid=image_path, R=R, T=T, FovY=FovY, FovX=FovX, image=image, depth_mono=depth_mono,
-                              image_path=image_path, image_name=image_name, width=width, height=height)
+                              image_path=image_path, image_name=image_name, width=width, height=height,
+                              depth_anything_map=None)
         cam_infos.append(cam_info)
     sys.stdout.write('\n')
     return cam_infos
@@ -173,6 +175,15 @@ def readColmapSceneInfo(path, images, dataset, eval, rand_pcd, mvs_pcd, llffhold
     reading_dir = "images" if images == None else images
     cam_infos_unsorted = readColmapCameras(cam_extrinsics=cam_extrinsics, cam_intrinsics=cam_intrinsics, images_folder=os.path.join(path, reading_dir))
     cam_infos = sorted(cam_infos_unsorted.copy(), key = lambda x : x.image_name)
+    cam_infos_with_depth = []
+    for cam_info in cam_infos:
+        depth_anything_map = None
+        depths_dir = os.path.join(os.path.dirname(os.path.dirname(cam_info.image_path)), "depths_npy")
+        depth_anything_path = os.path.join(depths_dir, cam_info.image_name + ".npy")
+        if os.path.exists(depth_anything_path):
+            depth_anything_map = torch.from_numpy(np.load(depth_anything_path))
+        cam_infos_with_depth.append(cam_info._replace(depth_anything_map=depth_anything_map))
+    cam_infos = cam_infos_with_depth
 
     if eval:
         print("Dataset Type: ", dataset)

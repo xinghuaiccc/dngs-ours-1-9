@@ -523,6 +523,87 @@ class GaussianModel:
         self.prune_points(prune_mask)
         torch.cuda.empty_cache()
 
+    def add_points(self, points, colors):
+        device = self._xyz.device if self._xyz.numel() > 0 else torch.device("cuda")
+        points = points.to(device=device, dtype=torch.float32)
+        colors = colors.to(device=device, dtype=torch.float32)
+
+        if points.ndim != 2 or points.shape[1] != 3:
+            raise ValueError("points must have shape [N, 3]")
+        if colors.ndim != 2 or colors.shape[1] != 3:
+            raise ValueError("colors must have shape [N, 3]")
+
+        n_new = points.shape[0]
+        sh_dim = (self.max_sh_degree + 1) ** 2
+
+        features_dc = RGB2SH(colors).view(n_new, 1, 3)
+        features_rest = torch.zeros((n_new, sh_dim - 1, 3), device=device, dtype=torch.float32)
+
+        if self._features.numel() > 0:
+            feat_dim = self._features.shape[1]
+            features = torch.zeros((n_new, feat_dim), device=device, dtype=torch.float32)
+        else:
+            features = torch.zeros((n_new, 32), device=device, dtype=torch.float32)
+
+        if self._scaling.numel() > 0:
+            avg_scaling = self.get_scaling.mean(0)
+        else:
+            avg_scaling = torch.ones(3, device=device, dtype=torch.float32)
+        scaling = self.scaling_inverse_activation(avg_scaling).view(1, 3).repeat(n_new, 1)
+
+        rotation = torch.zeros((n_new, 4), device=device, dtype=torch.float32)
+        rotation[:, 0] = 1.0
+
+        opa_val = torch.full((n_new, 1), 0.1, device=device, dtype=torch.float32)
+        opacity = self.inverse_opacity_activation(opa_val)
+
+        depth_err = torch.zeros((n_new, 1), device=device, dtype=torch.float32)
+
+        tensors_dict = {
+            "xyz": points,
+            "f_dc": features_dc,
+            "f_rest": features_rest,
+            "features": features,
+            "opacity": opacity,
+            "depth_err": depth_err,
+            "scaling": scaling,
+            "rotation": rotation,
+        }
+
+        if self.optimizer is not None:
+            optimizable_tensors = self.cat_tensors_to_optimizer(tensors_dict)
+            self._xyz = optimizable_tensors["xyz"]
+            self._features_dc = optimizable_tensors["f_dc"]
+            self._features_rest = optimizable_tensors["f_rest"]
+            self._features = optimizable_tensors["features"]
+            self._opacity = optimizable_tensors["opacity"]
+            self._depth_err = optimizable_tensors["depth_err"]
+            self._scaling = optimizable_tensors["scaling"]
+            self._rotation = optimizable_tensors["rotation"]
+        else:
+            self._xyz = nn.Parameter(torch.cat((self._xyz, points), dim=0).requires_grad_(True))
+            self._features_dc = nn.Parameter(torch.cat((self._features_dc, features_dc), dim=0).requires_grad_(True))
+            self._features_rest = nn.Parameter(torch.cat((self._features_rest, features_rest), dim=0).requires_grad_(True))
+            self._features = nn.Parameter(torch.cat((self._features, features), dim=0).requires_grad_(True))
+            self._opacity = nn.Parameter(torch.cat((self._opacity, opacity), dim=0).requires_grad_(True))
+            self._depth_err = nn.Parameter(torch.cat((self._depth_err, depth_err), dim=0).requires_grad_(True))
+            self._scaling = nn.Parameter(torch.cat((self._scaling, scaling), dim=0).requires_grad_(True))
+            self._rotation = nn.Parameter(torch.cat((self._rotation, rotation), dim=0).requires_grad_(True))
+
+        zeros_accum = torch.zeros((n_new, 1), device=device, dtype=torch.float32)
+        if self.xyz_gradient_accum.numel() == 0:
+            self.xyz_gradient_accum = zeros_accum.clone()
+            self.opa_gradient_accum = zeros_accum.clone()
+            self.denom = zeros_accum.clone()
+            self.denom_2 = zeros_accum.clone()
+            self.max_radii2D = torch.zeros((n_new,), device=device, dtype=torch.float32)
+        else:
+            self.xyz_gradient_accum = torch.cat((self.xyz_gradient_accum, zeros_accum), dim=0)
+            self.opa_gradient_accum = torch.cat((self.opa_gradient_accum, zeros_accum), dim=0)
+            self.denom = torch.cat((self.denom, zeros_accum), dim=0)
+            self.denom_2 = torch.cat((self.denom_2, zeros_accum), dim=0)
+            self.max_radii2D = torch.cat((self.max_radii2D, torch.zeros((n_new,), device=device, dtype=torch.float32)), dim=0)
+
     def add_densification_stats(self, viewspace_point_tensor, update_filter, accum_denom=True, add_random=False):
         # increase randomness to overcome local minima
         if add_random:
@@ -537,5 +618,4 @@ class GaussianModel:
         prune_mask = (self.get_opacity < min_opacity).squeeze()
         self.prune_points(prune_mask)
         torch.cuda.empty_cache()
-
 

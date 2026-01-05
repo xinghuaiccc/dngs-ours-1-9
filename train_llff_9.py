@@ -154,6 +154,26 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         Ll1 = l1_loss(image, gt_image)
         loss = Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
 
+        # [ADD] DINO 语义蒸馏分支
+        if iteration > 500 and getattr(viewpoint_cam, "dino_feat", None) is not None:
+            dino_feat = viewpoint_cam.dino_feat.to(loss.device)
+            feat_sem = gaussians.get_features_sem
+            sem_losses = []
+            chunk_size = 3
+            for start in range(0, feat_sem.shape[1], chunk_size):
+                chunk = feat_sem[:, start:start+chunk_size]
+                if chunk.shape[1] < chunk_size:
+                    pad = torch.zeros((chunk.shape[0], chunk_size - chunk.shape[1]), device=chunk.device)
+                    chunk = torch.cat([chunk, pad], dim=1)
+                render_sem = render(viewpoint_cam, gaussians, pipe, background, override_color=chunk)["render"]
+                dino_chunk = dino_feat[start:start+chunk_size]
+                if dino_chunk.shape[0] < chunk_size:
+                    pad = torch.zeros((chunk_size - dino_chunk.shape[0], dino_chunk.shape[1], dino_chunk.shape[2]), device=dino_chunk.device)
+                    dino_chunk = torch.cat([dino_chunk, pad], dim=0)
+                sem_losses.append(torch.mean(torch.abs(render_sem - dino_chunk)))
+            if len(sem_losses) > 0:
+                loss = loss + 0.05 * torch.stack(sem_losses).mean()
+
 
         # Reg
         loss_reg = torch.tensor(0., device=loss.device)

@@ -16,7 +16,7 @@ from utils.graphics_utils import getWorld2View2, getProjectionMatrix
 
 class Camera(nn.Module):
     def __init__(self, colmap_id, R, T, FoVx, FoVy, image, gt_alpha_mask,
-                 image_name, uid, depth_mono,
+                 image_name, uid, depth_mono, depth_anything_map=None,
                  trans=np.array([0.0, 0.0, 0.0]), scale=1.0, data_device = "cuda"
                  ):
         super(Camera, self).__init__()
@@ -39,9 +39,12 @@ class Camera(nn.Module):
             torch.cuda.set_device(self.data_device)
 
         self.depth_mono = None
+        self.depth_anything_map = None
         self.original_image = None
         if depth_mono is not None:
             self.depth_mono = depth_mono.to(self.data_device)
+        if depth_anything_map is not None:
+            self.depth_anything_map = depth_anything_map.to(self.data_device)
         # self.mono_scale = torch.nn.parameter.Parameter(data=torch.tensor(1.0, device=data_device), requires_grad=True)
         # self.mono_bias = torch.nn.parameter.Parameter(data=torch.tensor(0.0, device=data_device), requires_grad=True)
         # self.mono_optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
@@ -79,4 +82,3 @@ class MiniCam:
         self.full_proj_transform = full_proj_transform
         view_inv = torch.inverse(self.world_view_transform)
         self.camera_center = view_inv[3][:3]
-

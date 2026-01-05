@@ -13,15 +13,18 @@ import os
 import time
 import torch
 import torchvision
+import numpy as np
 from os import makedirs
 from random import randint
-from utils.graphics_utils import fov2focal
+from utils.graphics_utils import fov2focal, getWorld2View2, getProjectionMatrix
 from utils.loss_utils import l1_loss, loss_depth_smoothness, patch_norm_mse_loss, patch_norm_mse_loss_global, ssim
 # from utils.loss_utils import mssim as ssim
 from gaussian_renderer import render, render_for_depth, render_for_opa  # , network_gui
 import sys
 from scene import RenderScene, Scene, GaussianModel
 from utils.general_utils import safe_state
+from utils.warping import warp_image_based_on_depth
+from types import SimpleNamespace
 import uuid
 from tqdm import tqdm
 from utils.image_utils import psnr
@@ -153,6 +156,117 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         # Loss
         Ll1 = l1_loss(image, gt_image)
         loss = Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
+
+        # Scale-aligned depth loss (mono depth vs sparse COLMAP)
+        aligned_depth = None
+        if iteration > 1000:
+            mono_depth = getattr(viewpoint_cam, "depth_anything_map", None)
+            if mono_depth is not None:
+                try:
+                    gt_sparse_depth = sparse_depth_cache[viewpoint_cam.uid]
+                except Exception:
+                    gt_sparse_depth = None
+
+                if gt_sparse_depth is not None:
+                    mono_depth = mono_depth.squeeze()
+                    gt_sparse_depth = gt_sparse_depth.squeeze()
+
+                    valid_mask = gt_sparse_depth > 0
+                    if valid_mask.any():
+                        valid_mono = mono_depth[valid_mask].float()
+                        valid_sparse = gt_sparse_depth[valid_mask].float()
+
+                        if valid_mono.numel() > 1:
+                            a_mat = torch.stack(
+                                [valid_mono, torch.ones_like(valid_mono)], dim=1
+                            )
+                            solution = torch.linalg.lstsq(a_mat, valid_sparse).solution
+                            scale = solution[0]
+                            shift = solution[1]
+
+                            aligned_depth = mono_depth * scale + shift
+                            pred_depth = depth.squeeze()
+                            loss_depth_align = torch.abs(pred_depth - aligned_depth).mean()
+                            loss = loss + 0.5 * loss_depth_align
+
+        # Virtual view supervision
+        if iteration > 2000 and aligned_depth is not None:
+            angle = (torch.rand(1, device=image.device) * 0.2 - 0.1).item()
+            axis = torch.randn(3, device=image.device)
+            axis = axis / (axis.norm() + 1e-8)
+
+            kx, ky, kz = axis
+            zero = torch.tensor(0.0, device=image.device)
+            k_mat = torch.stack(
+                [torch.stack([zero, -kz, ky]),
+                 torch.stack([kz, zero, -kx]),
+                 torch.stack([-ky, kx, zero])],
+                dim=0,
+            )
+            eye = torch.eye(3, device=image.device)
+            rot_perturb = eye + torch.sin(torch.tensor(angle, device=image.device)) * k_mat + \
+                (1.0 - torch.cos(torch.tensor(angle, device=image.device))) * (k_mat @ k_mat)
+
+            base_R = torch.as_tensor(viewpoint_cam.R, device=image.device, dtype=torch.float32)
+            base_T = torch.as_tensor(viewpoint_cam.T, device=image.device, dtype=torch.float32)
+            delta_t = (torch.rand(3, device=image.device) * 0.1 - 0.05)
+
+            new_R = (rot_perturb @ base_R).detach().cpu().numpy()
+            new_T = (base_T + delta_t).detach().cpu().numpy()
+
+            trans = getattr(viewpoint_cam, "trans", np.array([0.0, 0.0, 0.0]))
+            scale = getattr(viewpoint_cam, "scale", 1.0)
+            world_view = torch.tensor(getWorld2View2(new_R, new_T, trans, scale), device=image.device).transpose(0, 1)
+            proj = getProjectionMatrix(
+                znear=viewpoint_cam.znear,
+                zfar=viewpoint_cam.zfar,
+                fovX=viewpoint_cam.FoVx,
+                fovY=viewpoint_cam.FoVy,
+            ).to(image.device).transpose(0, 1)
+            full_proj = (world_view.unsqueeze(0).bmm(proj.unsqueeze(0))).squeeze(0)
+            cam_center = world_view.inverse()[3, :3]
+
+            virtual_cam = SimpleNamespace(
+                FoVx=viewpoint_cam.FoVx,
+                FoVy=viewpoint_cam.FoVy,
+                image_width=viewpoint_cam.image_width,
+                image_height=viewpoint_cam.image_height,
+                world_view_transform=world_view,
+                full_proj_transform=full_proj,
+                camera_center=cam_center,
+                znear=viewpoint_cam.znear,
+                zfar=viewpoint_cam.zfar,
+            )
+
+            h, w = aligned_depth.shape
+            fx = fov2focal(viewpoint_cam.FoVx, w)
+            fy = fov2focal(viewpoint_cam.FoVy, h)
+            cx = (w - 1) * 0.5
+            cy = (h - 1) * 0.5
+            k_src = torch.tensor(
+                [[fx, 0.0, cx], [0.0, fy, cy], [0.0, 0.0, 1.0]],
+                device=image.device,
+                dtype=image.dtype,
+            )
+
+            aligned_depth_in = aligned_depth.unsqueeze(0).unsqueeze(0)
+            warped_image, valid_mask = warp_image_based_on_depth(
+                image.unsqueeze(0),
+                aligned_depth_in,
+                k_src,
+                viewpoint_cam.world_view_transform,
+                virtual_cam.world_view_transform,
+            )
+
+            render_virtual = render(virtual_cam, gaussians, pipe, background)
+            pred_virtual = render_virtual["render"]
+
+            valid_mask = valid_mask.unsqueeze(0)
+            if valid_mask.sum() > 0:
+                warped_masked = warped_image * valid_mask
+                pred_masked = pred_virtual.unsqueeze(0) * valid_mask
+                loss_virtual = torch.abs(warped_masked - pred_masked).sum() / (valid_mask.sum() * 3.0)
+                loss = loss + 0.2 * loss_virtual
 
 
         # Reg

@@ -36,6 +36,55 @@ except ImportError:
 
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
+def get_sparse_depth_map(viewpoint_cam, points_xyz):
+    """
+    Step 2 辅助函数：将稀疏 3D 点云投影到当前相机视角，生成稀疏深度真值图。
+    用于混合深度监督，提供绝对几何锚点。
+    """
+    # 1. 投影到相机坐标系 (World -> Camera)
+    # view_matrix 是 [4, 4]，points 是 [N, 3]
+    # 注意：3DGS 的变换矩阵通常是转置过的，直接 matmul 即可
+    view_matrix = viewpoint_cam.world_view_transform.cuda()
+
+    # 齐次坐标拼接
+    points_hom = torch.cat([points_xyz, torch.ones_like(points_xyz[:, :1])], dim=1)
+    points_cam = torch.matmul(points_hom, view_matrix)
+    depth = points_cam[:, 2]  # Z 值 (深度)
+
+    # 2. 投影到屏幕 NDC (Camera -> NDC)
+    full_proj = viewpoint_cam.full_proj_transform.cuda()
+    points_ndc = torch.matmul(points_hom, full_proj)
+    points_ndc = points_ndc[:, :3] / (points_ndc[:, 3:4] + 1e-6)  # 透视除法
+
+    # 3. 过滤有效点 (在视锥体内)
+    # 深度 > 0.01，且在屏幕范围内 (-1.1 ~ 1.1 留一点余量)
+    mask = (depth > 0.01) & \
+           (points_ndc[:, 0] > -1.1) & (points_ndc[:, 0] < 1.1) & \
+           (points_ndc[:, 1] > -1.1) & (points_ndc[:, 1] < 1.1)
+
+    valid_depth = depth[mask]
+    valid_ndc = points_ndc[mask]
+
+    # 4. 映射到像素坐标
+    H, W = viewpoint_cam.image_height, viewpoint_cam.image_width
+    pixel_x = ((valid_ndc[:, 0] + 1) * W / 2).long()
+    pixel_y = ((valid_ndc[:, 1] + 1) * H / 2).long()
+
+    # 边界截断
+    pixel_x = torch.clamp(pixel_x, 0, W - 1)
+    pixel_y = torch.clamp(pixel_y, 0, H - 1)
+
+    # 5. 生成稀疏深度图
+    # 我们希望每个像素保留"最近"的那个点的深度 (Z-Buffer 逻辑)
+    # 简单做法：按深度降序排列，这样近的点会最后写入，覆盖远的点
+    sort_idx = torch.argsort(valid_depth, descending=True)
+
+    sparse_map = torch.zeros((H, W), device="cuda", dtype=torch.float32)
+    sparse_map[pixel_y[sort_idx], pixel_x[sort_idx]] = valid_depth[sort_idx]
+
+    return sparse_map
+
+
 def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from, near_range):
     first_iter = 0
     tb_writer = prepare_output_and_logger(dataset, opt)
@@ -60,6 +109,14 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     ema_loss_for_log = 0.0
     progress_bar = tqdm(range(first_iter, opt.iterations), desc="Training progress", ascii=True, dynamic_ncols=True)
     first_iter += 1
+
+    # 【Step 2 初始化】锁死 COLMAP 初始稀疏点云
+    # 这是我们的"绝对几何锚点"
+    initial_sparse_points = gaussians.get_xyz.detach().clone()
+    # 缓存字典，避免重复计算 (如果显存够用)
+    sparse_depth_cache = {}
+
+
 
     patch_range = (5, 17) # LLFF
 
@@ -91,22 +148,66 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
             pipe.debug = True
 
         # -------------------------------------------------- DEPTH --------------------------------------------
+        # -------------------------------------------------- DEPTH --------------------------------------------
+        # 混合深度监督 (Hybrid Depth Supervision)
         if iteration > opt.hard_depth_start:
             render_pkg = render_for_depth(viewpoint_cam, gaussians, pipe, background)
             depth = render_pkg["depth"]
 
-            # Depth loss
+            # --- 原有：单目深度监督 (Mono Depth) ---
             loss_hard = 0
-            depth_mono = 255.0 - viewpoint_cam.depth_mono
+            depth_mono = 255.0 - viewpoint_cam.depth_mono  # 注意确认你的 depth_mono 读取逻辑是否需要反转
 
-            loss_l2_dpt = patch_norm_mse_loss(depth[None,...], depth_mono[None,...], randint(patch_range[0], patch_range[1]), opt.error_tolerance)
-            loss_hard += 0.1 * loss_l2_dpt
+            # 这里的 patch_norm_mse_loss 会自动处理尺度对齐 (Scale-Invariant)
+            loss_mono = patch_norm_mse_loss(depth[None, ...], depth_mono[None, ...],
+                                            randint(patch_range[0], patch_range[1]), opt.error_tolerance)
 
-            
+            # --- 【Step 2 修正版】：尺度不变稀疏深度监督 (Scale-Invariant Sparse Depth) ---
+            loss_sparse = torch.tensor(0.0, device="cuda")
+
+            if iteration > 3000:
+                if viewpoint_cam.uid not in sparse_depth_cache:
+                    sparse_depth_cache[viewpoint_cam.uid] = get_sparse_depth_map(viewpoint_cam, initial_sparse_points)
+                gt_sparse_depth = sparse_depth_cache[viewpoint_cam.uid]
+
+                # 1. 维度对齐
+                current_depth = depth.squeeze()  # [H, W]
+
+                # 2. 提取有效点
+                valid_mask = gt_sparse_depth > 0
+
+                # 至少要有几十个点才能算对齐，否则不稳定
+                if valid_mask.sum() > 50:
+                    pred_val = current_depth[valid_mask]
+                    gt_val = gt_sparse_depth[valid_mask]
+
+                    # 3. 【关键】实时线性对齐 (Least Squares Alignment)
+                    # 求解 scale * pred + shift = gt
+                    # 这种方法允许模型有整体的尺度漂移，只约束几何结构
+
+                    # 简单的 Median 对齐 (更鲁棒，防离群点)
+                    scale_init = torch.median(gt_val) / (torch.median(pred_val) + 1e-6)
+                    pred_aligned = current_depth * scale_init
+
+                    # 再算一次 L1 Loss
+                    # 这样模型只需要把"形状"修对，不需要整体搬家
+                    loss_sparse = torch.abs(pred_aligned[valid_mask] - gt_val).mean()
+
+            # --- 权重策略 ---
+            # 既然是修正版，权重可以稍微给大一点点，因为不再冲突了
+            lambda_sparse = 0.0
+            if iteration > 3000:
+                progress = min(1.0, (iteration - 3000) / 2000.0)
+                lambda_sparse = 0.2 * progress  # 保持 0.2
+
+            # 总深度 Loss
+            loss_hard += 0.1 * loss_mono + lambda_sparse * loss_sparse
+
             if iteration > 3000:
                 loss_hard += 0.1 * loss_depth_smoothness(depth[None, ...], depth_mono[None, ...])
 
-            loss_global = patch_norm_mse_loss_global(depth[None,...], depth_mono[None,...], randint(patch_range[0], patch_range[1]), opt.error_tolerance)
+            loss_global = patch_norm_mse_loss_global(depth[None, ...], depth_mono[None, ...],
+                                                     randint(patch_range[0], patch_range[1]), opt.error_tolerance)
             loss_hard += 1 * loss_global
 
             loss_hard.backward()
@@ -114,7 +215,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
             # Optimizer step
             if iteration < opt.iterations:
                 gaussians.optimizer.step()
-                gaussians.optimizer.zero_grad(set_to_none = True)
+                gaussians.optimizer.zero_grad(set_to_none=True)
 
         # -------------------------------------------------- pnt --------------------------------------------
         if iteration > opt.soft_depth_start :

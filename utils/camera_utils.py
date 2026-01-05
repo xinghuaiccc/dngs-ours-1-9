@@ -16,6 +16,7 @@ except:
 import numpy as np
 from utils.general_utils import NPtoTorch, PILtoTorch
 from utils.graphics_utils import fov2focal
+import torch.nn.functional as F
 
 WARNED = False
 
@@ -43,6 +44,19 @@ def loadCam(args, id, cam_info, resolution_scale):
 
     resized_image_rgb = PILtoTorch(cam_info.image, resolution)
     resized_depth_mono = PILtoTorch(cam_info.depth_mono, resolution)
+    resized_depth_anything = None
+    if cam_info.depth_anything_map is not None:
+        depth_anything = cam_info.depth_anything_map
+        if depth_anything.ndim == 2:
+            depth_anything = depth_anything.unsqueeze(0).unsqueeze(0)
+        elif depth_anything.ndim == 3:
+            depth_anything = depth_anything.unsqueeze(0)
+        resized_depth_anything = F.interpolate(
+            depth_anything.float(),
+            size=(resolution[1], resolution[0]),
+            mode="bilinear",
+            align_corners=False,
+        ).squeeze(0).squeeze(0)
     
     gt_image = resized_image_rgb[:3, ...]
     loaded_mask = None
@@ -53,6 +67,7 @@ def loadCam(args, id, cam_info, resolution_scale):
     return Camera(colmap_id=cam_info.uid, R=cam_info.R, T=cam_info.T, 
                   FoVx=cam_info.FovX, FoVy=cam_info.FovY, 
                   image=gt_image, gt_alpha_mask=loaded_mask, depth_mono=resized_depth_mono,
+                  depth_anything_map=resized_depth_anything,
                   image_name=cam_info.image_name, uid=id, data_device=args.data_device)
 
 
@@ -80,7 +95,7 @@ def loadRenderCam(args, id, cam_info, resolution_scale):
 
     cam = Camera(colmap_id=cam_info.uid, R=cam_info.R, T=cam_info.T, 
                   FoVx=cam_info.FovX, FoVy=cam_info.FovY, 
-                  image=None, gt_alpha_mask=None, depth_mono=None, 
+                  image=None, gt_alpha_mask=None, depth_mono=None, depth_anything_map=None,
                   image_name=cam_info.image_name, uid=id, data_device=args.data_device)
     cam.image_width, cam.image_height = resolution
     return cam

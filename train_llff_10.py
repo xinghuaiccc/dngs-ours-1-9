@@ -70,6 +70,40 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         iter_start.record()
 
         gaussians.update_learning_rate(max(iteration - opt.position_lr_start, 0))
+        # [FIX] GF-ALO early-only: enable for iter <= 2000, then fully disable
+        gfalo_active = getattr(opt, "gfalo_enable", False) and iteration <= 2000
+        current_max_ratio = None
+        current_cap = None
+        mean_opacity = 0.0
+        if gfalo_active:
+            # [ADD] GF-ALO stage schedule (v2)
+            stage1_end = getattr(opt, "gfalo_stage1_end", 2500)  # [FIX]
+            stage2_end = getattr(opt, "gfalo_stage2_end", 4000)  # [FIX]
+            iso_stage1 = getattr(opt, "gfalo_iso_stage1", 1.5)
+            iso_stage2 = getattr(opt, "gfalo_iso_stage2", 4.0)
+            iso_stage3 = getattr(opt, "gfalo_iso_stage3", 6.0)
+            opacity_param = getattr(gaussians, "_opacity", None)
+            if opacity_param is not None:
+                mean_opacity = torch.sigmoid(opacity_param).mean().item()
+            if mean_opacity < 0.6:  # [FIX]
+                current_max_ratio = iso_stage1
+            else:
+                if iteration < stage1_end:
+                    current_max_ratio = iso_stage1
+                elif iteration < stage2_end:
+                    t_iso = (iteration - stage1_end) / float(max(stage2_end - stage1_end, 1))
+                    current_max_ratio = iso_stage1 + t_iso * (iso_stage2 - iso_stage1)
+                else:
+                    t_iso = (iteration - stage2_end) / float(max(opt.iterations - stage2_end, 1))
+                    current_max_ratio = iso_stage2 + t_iso * (iso_stage3 - iso_stage2)
+            cap_start = getattr(opt, "gfalo_opacity_cap_start", 0.10)
+            cap_end = getattr(opt, "gfalo_opacity_cap_end", 0.60)  # [FIX]
+            cap_warmup = max(getattr(opt, "gfalo_opacity_warmup", 3000), 0)  # [FIX]
+            if cap_warmup > 0:
+                t_cap = min(iteration, cap_warmup) / float(cap_warmup)
+                current_cap = cap_start + t_cap * (cap_end - cap_start)
+            else:
+                current_cap = cap_end
 
         # Every 1000 its we increase the levels of SH up to a maximum degree
         # if iteration % 1000 == 0:
@@ -111,10 +145,64 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
             loss_hard.backward()
 
+            # [ADD] GF-ALO stage gating (freeze high-order SH / rotation / appearance)
+            if gfalo_active:
+                if iteration < stage1_end:
+                    features_rest = getattr(gaussians, "_features_rest", None)
+                    if features_rest is not None and getattr(features_rest, "grad", None) is not None:
+                        features_rest.grad.zero_()
+                if getattr(opt, "gfalo_freeze_rot", False):  # [ADD]
+                    rotation = getattr(gaussians, "_rotation", None)
+                    if rotation is not None and getattr(rotation, "grad", None) is not None:
+                        rotation.grad.zero_()
+                appearance_model = globals().get("appearance_model", None)
+                if appearance_model is None:
+                    appearance_model = getattr(gaussians, "appearance_model", None)
+                if appearance_model is not None:
+                    for param in appearance_model.parameters():
+                        if param.grad is not None:
+                            param.grad.zero_()
+
             # Optimizer step
             if iteration < opt.iterations:
-                gaussians.optimizer.step()
-                gaussians.optimizer.zero_grad(set_to_none = True)
+                # gaussians.optimizer.step()  # [FIX] temporary: single-step per iter (photometric only)
+                # [ADD] GF-ALO opacity/anisotropy clamp after step
+                # if getattr(opt, "gfalo_enable", False):
+                #     with torch.no_grad():
+                #         opacity_param = getattr(gaussians, "_opacity", None)
+                #         if opacity_param is not None:
+                #             cap_start = getattr(opt, "gfalo_opacity_cap_start", 1.0)
+                #             cap_end = getattr(opt, "gfalo_opacity_cap_end", 1.0)
+                #             warmup = max(getattr(opt, "gfalo_opacity_warmup", 0), 0)
+                #             unlock_iter = getattr(opt, "gfalo_unlock_iter", 0)
+                #             if iteration < unlock_iter:
+                #                 cap = cap_start
+                #             else:
+                #                 if warmup > 0:
+                #                     t = min(max(iteration - unlock_iter, 0), warmup) / float(warmup)
+                #                     cap = cap_start + t * (cap_end - cap_start)
+                #                 else:
+                #                     cap = cap_end
+                #             # [FIX] Treat _opacity as logit when inverse_opacity_activation exists (default to logit)
+                #             if hasattr(gaussians, "inverse_opacity_activation"):
+                #                 cap_tensor = torch.tensor(cap, device=opacity_param.device).clamp(1e-6, 1 - 1e-6)
+                #                 cap_val = gaussians.inverse_opacity_activation(cap_tensor)
+                #                 opacity_param.data.clamp_(max=cap_val)
+                #             else:
+                #                 # [FIX] Default to logit behavior when activation info is missing
+                #                 cap_tensor = torch.tensor(cap, device=opacity_param.device).clamp(1e-6, 1 - 1e-6)
+                #                 cap_val = torch.logit(cap_tensor)
+                #                 opacity_param.data.clamp_(max=cap_val)
+                #         scaling_param = getattr(gaussians, "_scaling", None)
+                #         if scaling_param is not None and iteration < getattr(opt, "gfalo_unlock_iter", 0):
+                #             iso_ratio = getattr(opt, "gfalo_iso_max_ratio", None)
+                #             if iso_ratio is not None and iso_ratio > 0:
+                #                 log_ratio = torch.log(torch.tensor(iso_ratio, device=scaling_param.device))
+                #                 log_min = scaling_param.min(dim=1, keepdim=True).values
+                #                 log_cap = log_min + log_ratio
+                #                 scaling_param.data.copy_(torch.minimum(scaling_param, log_cap))
+                # gaussians.optimizer.zero_grad(set_to_none = True)
+                pass  # [FIX] placeholder to keep block non-empty
 
         # -------------------------------------------------- pnt --------------------------------------------
         if iteration > opt.soft_depth_start :
@@ -137,10 +225,64 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
             loss_pnt.backward()
 
+            # [ADD] GF-ALO stage gating (freeze high-order SH / rotation / appearance)
+            if gfalo_active:
+                if iteration < stage1_end:
+                    features_rest = getattr(gaussians, "_features_rest", None)
+                    if features_rest is not None and getattr(features_rest, "grad", None) is not None:
+                        features_rest.grad.zero_()
+                if getattr(opt, "gfalo_freeze_rot", False):  # [ADD]
+                    rotation = getattr(gaussians, "_rotation", None)
+                    if rotation is not None and getattr(rotation, "grad", None) is not None:
+                        rotation.grad.zero_()
+                appearance_model = globals().get("appearance_model", None)
+                if appearance_model is None:
+                    appearance_model = getattr(gaussians, "appearance_model", None)
+                if appearance_model is not None:
+                    for param in appearance_model.parameters():
+                        if param.grad is not None:
+                            param.grad.zero_()
+
             # Optimizer step
             if iteration < opt.iterations:
-                gaussians.optimizer.step()
-                gaussians.optimizer.zero_grad(set_to_none = True)
+                # gaussians.optimizer.step()  # [FIX] temporary: single-step per iter (photometric only)
+                # [ADD] GF-ALO opacity/anisotropy clamp after step
+                # if getattr(opt, "gfalo_enable", False):
+                #     with torch.no_grad():
+                #         opacity_param = getattr(gaussians, "_opacity", None)
+                #         if opacity_param is not None:
+                #             cap_start = getattr(opt, "gfalo_opacity_cap_start", 1.0)
+                #             cap_end = getattr(opt, "gfalo_opacity_cap_end", 1.0)
+                #             warmup = max(getattr(opt, "gfalo_opacity_warmup", 0), 0)
+                #             unlock_iter = getattr(opt, "gfalo_unlock_iter", 0)
+                #             if iteration < unlock_iter:
+                #                 cap = cap_start
+                #             else:
+                #                 if warmup > 0:
+                #                     t = min(max(iteration - unlock_iter, 0), warmup) / float(warmup)
+                #                     cap = cap_start + t * (cap_end - cap_start)
+                #                 else:
+                #                     cap = cap_end
+                #             # [FIX] Treat _opacity as logit when inverse_opacity_activation exists (default to logit)
+                #             if hasattr(gaussians, "inverse_opacity_activation"):
+                #                 cap_tensor = torch.tensor(cap, device=opacity_param.device).clamp(1e-6, 1 - 1e-6)
+                #                 cap_val = gaussians.inverse_opacity_activation(cap_tensor)
+                #                 opacity_param.data.clamp_(max=cap_val)
+                #             else:
+                #                 # [FIX] Default to logit behavior when activation info is missing
+                #                 cap_tensor = torch.tensor(cap, device=opacity_param.device).clamp(1e-6, 1 - 1e-6)
+                #                 cap_val = torch.logit(cap_tensor)
+                #                 opacity_param.data.clamp_(max=cap_val)
+                #         scaling_param = getattr(gaussians, "_scaling", None)
+                #         if scaling_param is not None and iteration < getattr(opt, "gfalo_unlock_iter", 0):
+                #             iso_ratio = getattr(opt, "gfalo_iso_max_ratio", None)
+                #             if iso_ratio is not None and iso_ratio > 0:
+                #                 log_ratio = torch.log(torch.tensor(iso_ratio, device=scaling_param.device))
+                #                 log_min = scaling_param.min(dim=1, keepdim=True).values
+                #                 log_cap = log_min + log_ratio
+                #                 scaling_param.data.copy_(torch.minimum(scaling_param, log_cap))
+                # gaussians.optimizer.zero_grad(set_to_none = True)
+                pass  # [FIX] placeholder to keep block non-empty
         
 
         # ---------------------------------------------- Photometric --------------------------------------------
@@ -159,12 +301,51 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         loss_reg = torch.tensor(0., device=loss.device)
         shape_pena = (gaussians.get_scaling.max(dim=1).values / gaussians.get_scaling.min(dim=1).values).mean()
         scale_pena = ((gaussians.get_scaling.max(dim=1, keepdim=True).values)**2).mean()
-        opa_pena = 1 - (opacity[opacity > 0.2]**2).mean() + ((1 - opacity[opacity < 0.2])**2).mean()
+        # [FIX] avoid NaN when masks are empty
+        mask_hi = opacity > 0.2
+        mask_lo = opacity < 0.2
+        opa_hi = torch.tensor(0.0, device=loss.device)
+        if mask_hi.any():
+            opa_hi = 1 - (opacity[mask_hi]**2).mean()
+        opa_lo = torch.tensor(0.0, device=loss.device)
+        if mask_lo.any():
+            opa_lo = ((1 - opacity[mask_lo])**2).mean()
+        opa_pena = opa_hi + opa_lo
 
         loss_reg += opt.shape_pena*shape_pena + opt.scale_pena*scale_pena + opt.opa_pena*opa_pena
         loss += loss_reg
+        # [ADD] GF-ALO soft opacity cap penalty (v2)
+        if gfalo_active:
+            opacity_param = getattr(gaussians, "_opacity", None)
+            if opacity_param is not None:
+                lambda_op = getattr(opt, "gfalo_opacity_lambda", 1e-3)
+                opa_sig = torch.sigmoid(opacity_param)
+                loss += lambda_op * torch.relu(opa_sig - current_cap).pow(2).mean()
+
+        # [FIX] NaN check every 100 iters
+        if iteration % 100 == 0:
+            if torch.isnan(loss) or torch.isnan(loss_reg) or torch.isnan(opa_pena):
+                print(f"[ITER {iteration}] NaN check - loss: {loss.item()}, loss_reg: {loss_reg.item()}, opa_pena: {opa_pena.item()}")
 
         loss.backward()
+        
+        # [ADD] GF-ALO stage gating (freeze high-order SH / rotation / appearance)
+        if gfalo_active:
+            if iteration < stage1_end:
+                features_rest = getattr(gaussians, "_features_rest", None)
+                if features_rest is not None and getattr(features_rest, "grad", None) is not None:
+                    features_rest.grad.zero_()
+            if getattr(opt, "gfalo_freeze_rot", False):  # [ADD]
+                rotation = getattr(gaussians, "_rotation", None)
+                if rotation is not None and getattr(rotation, "grad", None) is not None:
+                    rotation.grad.zero_()
+            appearance_model = globals().get("appearance_model", None)
+            if appearance_model is None:
+                appearance_model = getattr(gaussians, "appearance_model", None)
+            if appearance_model is not None:
+                for param in appearance_model.parameters():
+                    if param.grad is not None:
+                        param.grad.zero_()
         
         # ================================================================================
 
@@ -179,6 +360,12 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
                 progress_bar.update(10)
             if iteration == opt.iterations:
                 progress_bar.close()
+            # [ADD] GF-ALO diagnostics
+            if gfalo_active and iteration % 200 == 0:
+                mean_opa = mean_opacity
+                xyz = getattr(gaussians, "get_xyz", None)
+                n_points = xyz.shape[0] if xyz is not None else -1
+                print(f"[ITER {iteration}] N={n_points} mean_opacity={mean_opa:.6f} max_ratio={current_max_ratio:.3f} cap={current_cap:.3f}")
 
             # Log and save
             clean_iterations = testing_iterations + [first_iter]
@@ -225,6 +412,15 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
             # Optimizer step
             if iteration < opt.iterations:
                 gaussians.optimizer.step()
+                # [FIX] GF-ALO anisotropy clamp after step (no hard opacity clamp in v2)
+                if gfalo_active:
+                    with torch.no_grad():
+                        scaling_param = getattr(gaussians, "_scaling", None)
+                        if scaling_param is not None and current_max_ratio is not None and current_max_ratio > 0:
+                            log_ratio = torch.log(torch.tensor(current_max_ratio, device=scaling_param.device))
+                            log_min = scaling_param.min(dim=1, keepdim=True).values
+                            log_cap = log_min + log_ratio
+                            scaling_param.data.copy_(torch.minimum(scaling_param, log_cap))
                 gaussians.optimizer.zero_grad(set_to_none = True)
 
             if (iteration in checkpoint_iterations):
@@ -385,6 +581,20 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[])
     parser.add_argument("--start_checkpoint", type=str, default = None)
     parser.add_argument("--near", type=int, default=0)
+    parser.add_argument("--gfalo_enable", action="store_true", default=True)  # [FIX]
+    parser.add_argument("--no_gfalo", dest="gfalo_enable", action="store_false")  # [FIX]
+    parser.add_argument("--gfalo_unlock_iter", type=int, default=1000)  # [FIX]
+    parser.add_argument("--gfalo_stage1_end", type=int, default=2500)  # [FIX]
+    parser.add_argument("--gfalo_stage2_end", type=int, default=4000)  # [FIX]
+    parser.add_argument("--gfalo_iso_stage1", type=float, default=1.5)  # [ADD]
+    parser.add_argument("--gfalo_iso_stage2", type=float, default=4.0)  # [ADD]
+    parser.add_argument("--gfalo_iso_stage3", type=float, default=6.0)  # [ADD]
+    parser.add_argument("--gfalo_opacity_cap_start", type=float, default=0.10)  # [FIX]
+    parser.add_argument("--gfalo_opacity_cap_end", type=float, default=0.60)  # [FIX]
+    parser.add_argument("--gfalo_opacity_warmup", type=int, default=3000)  # [FIX]
+    parser.add_argument("--gfalo_opacity_lambda", type=float, default=1e-2)  # [FIX]
+    parser.add_argument("--gfalo_iso_max_ratio", type=float, default=1.5)  # [ADD]
+    parser.add_argument("--gfalo_freeze_rot", action="store_true", default=False)  # [ADD]
     args = parser.parse_args(sys.argv[1:])
     args.save_iterations.append(args.iterations)
     # args.checkpoint_iterations.append(args.iterations)
@@ -397,7 +607,22 @@ if __name__ == "__main__":
     # Start GUI server, configure and run training
     # network_gui.init(args.ip, args.port)
     torch.autograd.set_detect_anomaly(args.detect_anomaly)
-    training(lp.extract(args), op.extract(args), pp.extract(args), args.test_iterations, args.save_iterations, args.checkpoint_iterations, args.start_checkpoint, args.debug_from, args.near)
+    opt = op.extract(args)
+    # [ADD] propagate GF-ALO params into optimization args
+    opt.gfalo_enable = getattr(args, "gfalo_enable", True)
+    opt.gfalo_unlock_iter = getattr(args, "gfalo_unlock_iter", 2000)
+    opt.gfalo_opacity_cap_start = getattr(args, "gfalo_opacity_cap_start", 0.10)  # [FIX]
+    opt.gfalo_opacity_cap_end = getattr(args, "gfalo_opacity_cap_end", 0.60)  # [FIX]
+    opt.gfalo_opacity_warmup = getattr(args, "gfalo_opacity_warmup", 3000)  # [FIX]
+    opt.gfalo_opacity_lambda = getattr(args, "gfalo_opacity_lambda", 1e-2)  # [FIX]
+    opt.gfalo_iso_max_ratio = getattr(args, "gfalo_iso_max_ratio", 1.5)
+    opt.gfalo_freeze_rot = getattr(args, "gfalo_freeze_rot", False)  # [ADD]
+    opt.gfalo_stage1_end = getattr(args, "gfalo_stage1_end", 2500)  # [FIX]
+    opt.gfalo_stage2_end = getattr(args, "gfalo_stage2_end", 4000)  # [FIX]
+    opt.gfalo_iso_stage1 = getattr(args, "gfalo_iso_stage1", 1.5)  # [ADD]
+    opt.gfalo_iso_stage2 = getattr(args, "gfalo_iso_stage2", 4.0)  # [ADD]
+    opt.gfalo_iso_stage3 = getattr(args, "gfalo_iso_stage3", 6.0)  # [ADD]
+    training(lp.extract(args), opt, pp.extract(args), args.test_iterations, args.save_iterations, args.checkpoint_iterations, args.start_checkpoint, args.debug_from, args.near)
 
     # All done
     print("\nTraining complete.")

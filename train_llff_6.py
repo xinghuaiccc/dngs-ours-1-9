@@ -156,13 +156,53 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
 
         # Reg
+        # ------------------------------------------------------------------------------
+        # 【测试配置】：仅流形几何扁平化 (Manifold Flattening Only)
+        # ------------------------------------------------------------------------------
+
+        loss_manifold = torch.tensor(0., device="cuda")
+
+        # 建议从 1000 轮开始介入，给高斯球一点初始生长的空间
+        if iteration > 1000:
+            scales = gaussians.get_scaling
+
+            # 1. 对三个轴进行排序 (从小到大)
+            # values: [N, 3], indices: [N, 3]
+            sorted_scales, _ = torch.sort(scales, dim=1)
+
+            min_scale = sorted_scales[:, 0]  # 最短轴 (厚度)
+            mid_scale = sorted_scales[:, 1]  # 中间轴 (宽度)
+            max_scale = sorted_scales[:, 2]  # 最长轴 (长度)
+
+            # 2. 扁平化约束 (Flattening Loss)
+            # 核心逻辑：强迫 (厚度 / 宽度) < 0.1
+            # 这样高斯球就会变成 "硬币" 或 "叶片" 形状，消除体积雾感
+            ratio = min_scale / (mid_scale + 1e-6)
+            loss_flat = torch.mean(torch.relu(ratio - 0.1))
+
+            # 3. 紧致度约束 (Compactness Loss)
+            # 防止叶片为了变薄而无限拉长 (Fern 场景特别需要这个)
+            # 限制最长轴不能超过 0.5 (根据场景尺度可微调，0.5 是个安全值)
+            loss_compact = torch.mean(torch.relu(max_scale - 0.5))
+
+            # 4. 动态权重
+            # 随着训练进行，约束越来越强
+            progress = min(1.0, (iteration - 1000) / 2000.0)
+
+            # 扁平化权重 1.0 (主攻), 紧致度权重 0.1 (辅助)
+            loss_manifold = (1.0 * loss_flat + 0.1 * loss_compact) * progress
+
+        # ==============================================================================
+
+        # 原有的 DNGaussian 正则 (保持默认，作为 Baseline 的一部分)
         loss_reg = torch.tensor(0., device=loss.device)
         shape_pena = (gaussians.get_scaling.max(dim=1).values / gaussians.get_scaling.min(dim=1).values).mean()
-        scale_pena = ((gaussians.get_scaling.max(dim=1, keepdim=True).values)**2).mean()
-        opa_pena = 1 - (opacity[opacity > 0.2]**2).mean() + ((1 - opacity[opacity < 0.2])**2).mean()
+        scale_pena = ((gaussians.get_scaling.max(dim=1, keepdim=True).values) ** 2).mean()
+        opa_pena = 1 - (opacity[opacity > 0.2] ** 2).mean() + ((1 - opacity[opacity < 0.2]) ** 2).mean()
+        loss_reg += opt.shape_pena * shape_pena + opt.scale_pena * scale_pena + opt.opa_pena * opa_pena
 
-        loss_reg += opt.shape_pena*shape_pena + opt.scale_pena*scale_pena + opt.opa_pena*opa_pena
-        loss += loss_reg
+        # 总 Loss = RGB + SSIM + 原版正则 + 【扁平化创新】
+        loss += loss_reg + loss_manifold
 
         loss.backward()
         

@@ -27,6 +27,8 @@ from tqdm import tqdm
 from utils.image_utils import psnr
 from argparse import ArgumentParser, Namespace
 from arguments import ModelParams, PipelineParams, OptimizationParams
+import torch.fft
+import torch.nn.functional as F
 try:
     from torch.utils.tensorboard import SummaryWriter
     print('Launch TensorBoard')
@@ -36,6 +38,138 @@ except ImportError:
 
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
+def fft_loss(image, gt_image):
+    """
+    FFT loss with size alignment and a GPU->CPU fallback to avoid cuFFT errors.
+    """
+    h, w = image.shape[-2], image.shape[-1]
+    target_h = ((h + 31) // 32) * 32
+    target_w = ((w + 31) // 32) * 32
+
+    if h != target_h or w != target_w:
+        image_in = F.interpolate(
+            image.unsqueeze(0),
+            size=(target_h, target_w),
+            mode='bilinear',
+            align_corners=False
+        ).squeeze(0)
+        gt_in = F.interpolate(
+            gt_image.unsqueeze(0),
+            size=(target_h, target_w),
+            mode='bilinear',
+            align_corners=False
+        ).squeeze(0)
+    else:
+        image_in = image
+        gt_in = gt_image
+
+    try:
+        with torch.cuda.amp.autocast(enabled=False):
+            pred = image_in.float().contiguous()
+            gt = gt_in.float().contiguous()
+
+            if torch.isnan(pred).any() or torch.isinf(pred).any():
+                pred = torch.nan_to_num(pred)
+            if torch.isnan(gt).any() or torch.isinf(gt).any():
+                gt = torch.nan_to_num(gt)
+
+            fft_pred = torch.fft.rfft2(pred)
+            fft_gt = torch.fft.rfft2(gt)
+
+            amp_pred = torch.sqrt(fft_pred.real.pow(2) + fft_pred.imag.pow(2) + 1e-6)
+            amp_gt = torch.sqrt(fft_gt.real.pow(2) + fft_gt.imag.pow(2) + 1e-6)
+            loss_amp = torch.abs(amp_pred - amp_gt).mean()
+
+            loss_phase = (torch.abs(fft_pred.real - fft_gt.real).mean() +
+                          torch.abs(fft_pred.imag - fft_gt.imag).mean())
+
+            return loss_amp + 0.5 * loss_phase
+    except RuntimeError as e:
+        if not hasattr(fft_loss, "has_warned"):
+            print(
+                "\n[Warning] GPU FFT failed ({}), switching to CPU for this step.".format(e)
+            )
+            fft_loss.has_warned = True
+
+        pred_cpu = image_in.detach().cpu().float()
+        gt_cpu = gt_in.detach().cpu().float()
+
+        fft_pred = torch.fft.rfft2(pred_cpu)
+        fft_gt = torch.fft.rfft2(gt_cpu)
+
+        amp_pred = torch.sqrt(fft_pred.real.pow(2) + fft_pred.imag.pow(2) + 1e-6)
+        amp_gt = torch.sqrt(fft_gt.real.pow(2) + fft_gt.imag.pow(2) + 1e-6)
+
+        loss_amp = torch.abs(amp_pred - amp_gt).mean()
+        loss_phase = (torch.abs(fft_pred.real - fft_gt.real).mean() +
+                      torch.abs(fft_pred.imag - fft_gt.imag).mean())
+
+        return (loss_amp + 0.5 * loss_phase).to(image.device)
+
+
+def get_edge_mask(image, threshold=0.1):
+    """
+    image: [3, H, W], 0~1, CUDA
+    return: edge_mask [H, W], float(0/1), CUDA
+    """
+    with torch.no_grad():
+        gray = (0.299 * image[0] + 0.587 * image[1] + 0.114 * image[2]).unsqueeze(0).unsqueeze(0)
+
+        sobel_x = torch.tensor(
+            [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],
+            device=image.device, dtype=torch.float32
+        ).view(1, 1, 3, 3)
+        sobel_y = torch.tensor(
+            [[-1, -2, -1], [0, 0, 0], [1, 2, 1]],
+            device=image.device, dtype=torch.float32
+        ).view(1, 1, 3, 3)
+
+        gx = F.conv2d(gray, sobel_x, padding=1)
+        gy = F.conv2d(gray, sobel_y, padding=1)
+        mag = torch.sqrt(gx * gx + gy * gy).squeeze()
+
+        mag_max = mag.max()
+        if mag_max > 0:
+            mag = mag / mag_max
+
+        edge = torch.clamp((mag - threshold) / (1.0 - threshold + 1e-6), 0.0, 1.0)
+        return edge
+
+
+def sample_edge_weights_for_gaussians(gaussians, viewpoint_cam, edge_mask, visibility_filter):
+    """
+    gaussians.get_xyz: [N, 3]
+    viewpoint_cam.full_proj_transform: [4,4]
+    edge_mask: [H, W] float CUDA
+    visibility_filter: [N] bool
+    return: weights [M] float CUDA (M = visible gaussians)
+    """
+    xyz = gaussians.get_xyz[visibility_filter]
+    device = xyz.device
+    h, w = int(viewpoint_cam.image_height), int(viewpoint_cam.image_width)
+
+    full_proj = viewpoint_cam.full_proj_transform.to(device)
+
+    ones = torch.ones((xyz.shape[0], 1), device=device, dtype=xyz.dtype)
+    points_h = torch.cat([xyz, ones], dim=1)
+
+    points_clip = points_h @ full_proj
+    w_clip = points_clip[:, 3] + 1e-7
+
+    ndc_x = points_clip[:, 0] / w_clip
+    ndc_y = points_clip[:, 1] / w_clip
+
+    valid = (w_clip > 0) & (ndc_x > -1.1) & (ndc_x < 1.1) & (ndc_y > -1.1) & (ndc_y < 1.1)
+
+    u = ((ndc_x + 1.0) * 0.5 * w).long()
+    v = ((1.0 - (ndc_y + 1.0) * 0.5) * h).long()
+
+    u = torch.clamp(u, 0, w - 1)
+    v = torch.clamp(v, 0, h - 1)
+
+    weights = edge_mask[v, u]
+    weights = weights * valid.float()
+    return weights
 def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from, near_range):
     first_iter = 0
     tb_writer = prepare_output_and_logger(dataset, opt)
@@ -62,6 +196,14 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     first_iter += 1
 
     patch_range = (5, 17) # LLFF
+
+    edge_mask_cache = {}
+    s0_global = None
+    edge_reg_start = 1500
+    edge_reg_warmup = 1000
+    edge_reg_lambda_max = 3e-3
+    edge_mask_threshold = 0.05
+    fft_weight = 0.01
 
     time_accum = 0
 
@@ -154,15 +296,58 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         Ll1 = l1_loss(image, gt_image)
         loss = Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
 
+        loss_fft = fft_loss(image, gt_image)
+        loss = loss + fft_weight * loss_fft
 
         # Reg
         loss_reg = torch.tensor(0., device=loss.device)
-        shape_pena = (gaussians.get_scaling.max(dim=1).values / gaussians.get_scaling.min(dim=1).values).mean()
-        scale_pena = ((gaussians.get_scaling.max(dim=1, keepdim=True).values)**2).mean()
-        opa_pena = 1 - (opacity[opacity > 0.2]**2).mean() + ((1 - opacity[opacity < 0.2])**2).mean()
+        sc = gaussians.get_scaling
+        shape_pena = (sc.max(dim=1).values / (sc.min(dim=1).values + 1e-8)).mean()
+        scale_pena = (sc.max(dim=1, keepdim=True).values ** 2).mean()
 
-        loss_reg += opt.shape_pena*shape_pena + opt.scale_pena*scale_pena + opt.opa_pena*opa_pena
-        loss += loss_reg
+        opa_pena = torch.tensor(0., device=loss.device)
+        opa_hi = opacity[opacity > 0.2]
+        opa_lo = opacity[opacity < 0.2]
+        if opa_hi.numel() > 0:
+            opa_pena = opa_pena + (1 - (opa_hi ** 2).mean())
+        if opa_lo.numel() > 0:
+            opa_pena = opa_pena + (((1 - opa_lo) ** 2).mean())
+
+        loss_reg = loss_reg + opt.shape_pena * shape_pena + opt.scale_pena * scale_pena + opt.opa_pena * opa_pena
+        loss = loss + loss_reg
+
+        # Edge-scale regularization
+        loss_edge_scale = torch.tensor(0.0, device=image.device)
+        if iteration > edge_reg_start:
+            cam_id = getattr(viewpoint_cam, "uid", None)
+            if cam_id is None:
+                cam_id = getattr(viewpoint_cam, "image_name", None)
+            if cam_id is None:
+                cam_id = id(viewpoint_cam)
+
+            if cam_id not in edge_mask_cache:
+                edge_mask_cache[cam_id] = get_edge_mask(gt_image, threshold=edge_mask_threshold).to(torch.float16).cpu()
+
+            curr_edge_mask = edge_mask_cache[cam_id].to(image.device).float()
+            weights = sample_edge_weights_for_gaussians(gaussians, viewpoint_cam, curr_edge_mask, visibility_filter)
+
+            if float(weights.sum().item()) > 0:
+                current_scales = gaussians.get_scaling[visibility_filter]
+                smax = current_scales.max(dim=1).values
+
+                if s0_global is None:
+                    s0_global = torch.quantile(smax.detach(), 0.70)
+                elif iteration % 200 == 0:
+                    s0_new = torch.quantile(smax.detach(), 0.70)
+                    s0_global = 0.9 * s0_global + 0.1 * s0_new
+
+                penalty = torch.relu(smax - s0_global)
+                loss_edge_scale = (weights * penalty).sum() / (weights.sum() + 1e-6)
+
+                t = min(1.0, (iteration - edge_reg_start) / edge_reg_warmup)
+                loss_edge_scale = (edge_reg_lambda_max * t) * loss_edge_scale
+
+        loss = loss + loss_edge_scale
 
         loss.backward()
         
@@ -172,6 +357,9 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
         with torch.no_grad():
             # Progress bar
+            if iteration % 200 == 0 and iteration > edge_reg_start:
+                print("[EAGL] edge_scale=", float(loss_edge_scale.item()),
+                      " s0=", None if s0_global is None else float(s0_global.item()))
             if not loss.isnan():
                 ema_loss_for_log = 0.4 * (loss.item()) + 0.6 * ema_loss_for_log
             if iteration % 10 == 0:
@@ -202,6 +390,25 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
                 
                 # if iteration % opt.opacity_reset_interval == 0 or (dataset.white_background and iteration == opt.densify_from_iter):
                 #     gaussians.reset_opacity()
+
+            # View-aware geometric pruning for floaters in sparse views
+            if iteration > 2000 and iteration % 500 == 0:
+                opacities = gaussians.get_opacity
+                scales = gaussians.get_scaling
+
+                prune_thresh = min(0.05, 0.01 + (iteration - 2000) * 0.00002)
+                mask_opacity = (opacities < prune_thresh).squeeze()
+
+                volumes = torch.prod(scales, dim=1)
+                mask_big_floater = (volumes > 0.01) & (opacities < 0.3).squeeze()
+
+                sorted_scales, _ = torch.sort(scales, dim=1)
+                mask_needle = (sorted_scales[:, 2] / sorted_scales[:, 0] > 50.0) & (
+                    sorted_scales[:, 2] > 0.1) & (opacities < 0.3).squeeze()
+
+                prune_mask = mask_opacity | mask_big_floater | mask_needle
+                if prune_mask.sum() > 0:
+                    gaussians.prune_points(prune_mask)
 
             if (iteration - 1) % 25 == 0:
                 viewpoint_sprical_cam = viewpoint_sprical_stack.pop(0)
@@ -379,8 +586,8 @@ if __name__ == "__main__":
     # parser.add_argument('--port', type=int, default=6009)
     parser.add_argument('--debug_from', type=int, default=-1)
     parser.add_argument('--detect_anomaly', action='store_true', default=False)
-    parser.add_argument("--test_iterations", nargs="+", type=int, default=[7000])
-    parser.add_argument("--save_iterations", nargs="+", type=int, default=[7000])
+    parser.add_argument("--test_iterations", nargs="+", type=int, default=[7000, 30000])
+    parser.add_argument("--save_iterations", nargs="+", type=int, default=[7000, 30000])
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[])
     parser.add_argument("--start_checkpoint", type=str, default = None)

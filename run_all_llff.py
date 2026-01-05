@@ -34,15 +34,15 @@ COMMON_ARGS = [
     "--eval",
     "--n_sparse", "3",
     "--rand_pcd",
-    "--iterations", "30000",
+    "--iterations", "7000",
     "--lambda_dssim", "0.2",
     "--densify_grad_threshold", "0.0013",
     "--prune_threshold", "0.01",
-    "--densify_until_iter", "15000",
+    "--densify_until_iter", "7000",
     "--percent_dense", "0.01",
     "--position_lr_init", "0.016",
     "--position_lr_final", "0.00016",
-    "--position_lr_max_steps", "15000",
+    "--position_lr_max_steps", "6000",
     "--position_lr_start", "500",
     "--split_opacity_thresh", "0.1",
     "--error_tolerance", "0.00025",
@@ -79,7 +79,7 @@ def run_training():
         # 构建完整的命令
         # python train_llff.py -s [source] --model_path [output] [args...]
         cmd = [
-                  python_exe, "train_llff.py",
+                  python_exe, "train_llff_1+2.py",
                   "-s", scene_path,
                   "--model_path", output_path
               ] + COMMON_ARGS

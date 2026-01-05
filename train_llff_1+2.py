@@ -27,6 +27,8 @@ from tqdm import tqdm
 from utils.image_utils import psnr
 from argparse import ArgumentParser, Namespace
 from arguments import ModelParams, PipelineParams, OptimizationParams
+import torch.fft
+import torch.nn.functional as F
 try:
     from torch.utils.tensorboard import SummaryWriter
     print('Launch TensorBoard')
@@ -35,6 +37,79 @@ except ImportError:
     TENSORBOARD_FOUND = False
 
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+
+def fft_loss(image, gt_image):
+    """
+    FFT loss with safe resizing and CPU fallback for cuFFT edge cases.
+    """
+    H, W = image.shape[-2], image.shape[-1]
+    target_H = ((H + 31) // 32) * 32
+    target_W = ((W + 31) // 32) * 32
+
+    if H != target_H or W != target_W:
+        image_in = F.interpolate(
+            image.unsqueeze(0),
+            size=(target_H, target_W),
+            mode="bilinear",
+            align_corners=False,
+        ).squeeze(0)
+        gt_in = F.interpolate(
+            gt_image.unsqueeze(0),
+            size=(target_H, target_W),
+            mode="bilinear",
+            align_corners=False,
+        ).squeeze(0)
+    else:
+        image_in = image
+        gt_in = gt_image
+
+    try:
+        with torch.cuda.amp.autocast(enabled=False):
+            pred = image_in.float().contiguous()
+            gt = gt_in.float().contiguous()
+
+            if torch.isnan(pred).any() or torch.isinf(pred).any():
+                pred = torch.nan_to_num(pred)
+            if torch.isnan(gt).any() or torch.isinf(gt).any():
+                gt = torch.nan_to_num(gt)
+
+            fft_pred = torch.fft.rfft2(pred)
+            fft_gt = torch.fft.rfft2(gt)
+
+            amp_pred = torch.sqrt(fft_pred.real.pow(2) + fft_pred.imag.pow(2) + 1e-6)
+            amp_gt = torch.sqrt(fft_gt.real.pow(2) + fft_gt.imag.pow(2) + 1e-6)
+            loss_amp = torch.abs(amp_pred - amp_gt).mean()
+
+            loss_phase = (
+                torch.abs(fft_pred.real - fft_gt.real).mean()
+                + torch.abs(fft_pred.imag - fft_gt.imag).mean()
+            )
+
+            return loss_amp + 0.5 * loss_phase
+
+    except RuntimeError as e:
+        if not hasattr(fft_loss, "has_warned"):
+            print(
+                f"\n[Warning] GPU FFT failed ({e}), switching to CPU for this step."
+            )
+            fft_loss.has_warned = True
+
+        pred_cpu = image_in.detach().cpu().float()
+        gt_cpu = gt_in.detach().cpu().float()
+
+        fft_pred = torch.fft.rfft2(pred_cpu)
+        fft_gt = torch.fft.rfft2(gt_cpu)
+
+        amp_pred = torch.sqrt(fft_pred.real.pow(2) + fft_pred.imag.pow(2) + 1e-6)
+        amp_gt = torch.sqrt(fft_gt.real.pow(2) + fft_gt.imag.pow(2) + 1e-6)
+
+        loss_amp = torch.abs(amp_pred - amp_gt).mean()
+        loss_phase = (
+            torch.abs(fft_pred.real - fft_gt.real).mean()
+            + torch.abs(fft_pred.imag - fft_gt.imag).mean()
+        )
+
+        return (loss_amp + 0.5 * loss_phase).to(image.device)
 
 def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from, near_range):
     first_iter = 0
@@ -62,6 +137,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     first_iter += 1
 
     patch_range = (5, 17) # LLFF
+    fft_weight = 0.01
 
     time_accum = 0
 
@@ -154,6 +230,9 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         Ll1 = l1_loss(image, gt_image)
         loss = Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
 
+        loss_fft = fft_loss(image, gt_image)
+        loss = loss + fft_weight * loss_fft
+
 
         # Reg
         loss_reg = torch.tensor(0., device=loss.device)
@@ -202,7 +281,47 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
                 
                 # if iteration % opt.opacity_reset_interval == 0 or (dataset.white_background and iteration == opt.densify_from_iter):
                 #     gaussians.reset_opacity()
+            # =========================================================================
+            # 【创新点 2 实现】：几何剪枝 (Geometric Pruning)
+            # 作用：清理方案一（边缘增强）产生的背景浮游物，大幅提升 PSNR/SSIM
+            # =========================================================================
 
+            # 策略：中后期强力清扫
+            # 建议从 2000 轮开始（此时几何主体已形成），每 500 轮执行一次
+            if iteration > 2000 and iteration % 500 == 0:
+
+                # 1. 获取模型状态
+                opacities = gaussians.get_opacity
+                scales = gaussians.get_scaling
+
+                # --- 子策略 A: 渐进式透明度剪枝 ---
+                # DNGaussian 默认 prune_threshold 是 0.005，这太宽容了。
+                # 对于边缘增强产生的“硬噪声”，我们需要更高的门限。
+                # 2000轮时杀掉 <0.01 的，4000轮时杀掉 <0.03 的... 循序渐进
+
+                # 计算动态门限 (最高不超过 0.05)
+                prune_thresh = min(0.05, 0.01 + (iteration - 2000) * 0.00002)
+
+                # 生成掩码
+                mask_opacity = (opacities < prune_thresh).squeeze()
+
+                # --- 子策略 B: 膨胀几何抑制 (可选) ---
+                # 背景浮游物通常还有一个特征：体积特别大（Scale 大），因为想用一个球糊弄一大片区域
+                # 计算体积 (三个轴的乘积)
+                volumes = torch.prod(scales, dim=1)
+                # 如果一个点体积很大(>0.1) 且透明度又不够高(<0.3)，大概率是垃圾
+                mask_big_floater = (volumes > 0.1) & (opacities < 0.3).squeeze()
+
+                # 组合剪枝掩码 (只要满足 A 或 B 就杀)
+                prune_mask = mask_opacity | mask_big_floater
+
+                # 执行剪枝
+                if prune_mask.sum() > 0:
+                    gaussians.prune_points(prune_mask)
+                    # (可选) 打印日志，看着舒服
+                    # print(f"[ITER {iteration}] Geometric Pruning: Removed {prune_mask.sum()} floaters (Thresh: {prune_thresh:.4f})")
+
+            # =========================================================================
             if (iteration - 1) % 25 == 0:
                 viewpoint_sprical_cam = viewpoint_sprical_stack.pop(0)
                 mask_near = None

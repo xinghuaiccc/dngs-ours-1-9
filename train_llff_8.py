@@ -36,6 +36,18 @@ except ImportError:
 
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
+class AppearanceModel(torch.nn.Module):
+    def __init__(self, n_cameras):
+        super().__init__()
+        self.log_gamma = torch.nn.Parameter(torch.zeros(n_cameras, 3, 1, 1, device="cuda"))  # gamma=1
+        self.beta = torch.nn.Parameter(torch.zeros(n_cameras, 3, 1, 1, device="cuda"))       # beta=0
+
+    def get(self, cam_idx: int):
+        gamma = torch.exp(self.log_gamma[cam_idx])
+        beta = self.beta[cam_idx]
+        return gamma, beta
+
+
 def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from, near_range):
     first_iter = 0
     tb_writer = prepare_output_and_logger(dataset, opt)
@@ -65,7 +77,30 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
     time_accum = 0
 
-    for iteration in range(first_iter, opt.iterations + 1):        
+    # ==============================================================================
+    # Appearance Compensation (AC) init  —— 训练视角曝光/色彩对齐
+    # 放在 for-loop 之前
+    # ==============================================================================
+    train_cams = scene.getTrainCameras()
+    n_cams = len(train_cams)
+
+    # 建立 cam.uid -> index 的映射
+    cam_id_map = {}
+    for i, cam in enumerate(train_cams):
+        uid = getattr(cam, "uid", None)
+        if uid is None:
+            uid = getattr(cam, "image_name", None)
+        cam_id_map[uid] = i
+
+    # 可学习外观参数
+    appearance_model = AppearanceModel(n_cams).to("cuda")
+    optimizer_app = torch.optim.Adam(appearance_model.parameters(), lr=1e-3)
+
+    # AC 正则权重（防止 gamma/beta 漂移）
+    lambda_app_reg = 1e-4
+    # ==============================================================================
+
+    for iteration in range(first_iter, opt.iterations + 1):
 
         iter_start.record()
 
@@ -141,19 +176,29 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
             if iteration < opt.iterations:
                 gaussians.optimizer.step()
                 gaussians.optimizer.zero_grad(set_to_none = True)
-        
+
 
         # ---------------------------------------------- Photometric --------------------------------------------
-        
+
         render_pkg = render(viewpoint_cam, gaussians, pipe, background)
         image, viewspace_point_tensor, visibility_filter, radii = render_pkg["render"], render_pkg["viewspace_points"], render_pkg["visibility_filter"], render_pkg["radii"]
         # depth
         depth, opacity, alpha = render_pkg["depth"], render_pkg["opacity"], render_pkg['alpha']  # [visibility_filter]
 
         # Loss
-        Ll1 = l1_loss(image, gt_image)
-        loss = Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
+        cam_idx = cam_id_map.get(viewpoint_cam.uid, None)
 
+        if cam_idx is not None:
+            gamma, beta = appearance_model.get(cam_idx)
+
+            # GT -> canonical
+            gt_for_loss = (gt_image - beta) / (gamma + 1e-6)
+            gt_for_loss = torch.clamp(gt_for_loss, 0.0, 1.0)
+        else:
+            gt_for_loss = gt_image
+
+        Ll1 = l1_loss(image, gt_for_loss)
+        loss = Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_for_loss))
 
         # Reg
         loss_reg = torch.tensor(0., device=loss.device)
@@ -163,6 +208,13 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
         loss_reg += opt.shape_pena*shape_pena + opt.scale_pena*scale_pena + opt.opa_pena*opa_pena
         loss += loss_reg
+
+        # ===== Appearance regularization (必须在 backward 前) =====
+        lambda_app_reg = 1e-4
+        loss = loss + lambda_app_reg * (
+                appearance_model.log_gamma.pow(2).mean() +
+                appearance_model.beta.pow(2).mean()
+        )
 
         loss.backward()
         
@@ -226,6 +278,8 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
             if iteration < opt.iterations:
                 gaussians.optimizer.step()
                 gaussians.optimizer.zero_grad(set_to_none = True)
+                optimizer_app.step()
+                optimizer_app.zero_grad(set_to_none=True)
 
             if (iteration in checkpoint_iterations):
                 print("\n[ITER {}] Saving Checkpoint".format(iteration))
@@ -379,7 +433,7 @@ if __name__ == "__main__":
     # parser.add_argument('--port', type=int, default=6009)
     parser.add_argument('--debug_from', type=int, default=-1)
     parser.add_argument('--detect_anomaly', action='store_true', default=False)
-    parser.add_argument("--test_iterations", nargs="+", type=int, default=[7000])
+    parser.add_argument("--test_iterations", nargs="+", type=int, default=[2000, 4000, 7000])
     parser.add_argument("--save_iterations", nargs="+", type=int, default=[7000])
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[])

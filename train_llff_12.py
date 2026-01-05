@@ -21,6 +21,7 @@ from utils.loss_utils import l1_loss, loss_depth_smoothness, patch_norm_mse_loss
 from gaussian_renderer import render, render_for_depth, render_for_opa  # , network_gui
 import sys
 from scene import RenderScene, Scene, GaussianModel
+from scene.cameras import MiniCam
 from utils.general_utils import safe_state
 import uuid
 from tqdm import tqdm
@@ -36,6 +37,98 @@ except ImportError:
 
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
+# [SDS] helper using diffusers (local weights preferred, download if missing)
+class SDSHelper:
+    def __init__(self, model_path, device="cuda", prompt="a photo of a green fern plant"):
+        try:
+            from diffusers import AutoencoderKL, UNet2DConditionModel, DDIMScheduler
+            from transformers import CLIPTextModel, CLIPTokenizer
+            if not model_path:
+                raise ValueError("sds_model_path must be provided when sds_enable=True")
+            local_only = os.path.isdir(model_path)
+            self.device = device
+            cache_dir = os.getenv("HF_HOME", None)
+            self.tokenizer = CLIPTokenizer.from_pretrained(
+                model_path,
+                subfolder="tokenizer",
+                local_files_only=local_only,
+                cache_dir=cache_dir,
+            )
+            self.text_encoder = CLIPTextModel.from_pretrained(
+                model_path,
+                subfolder="text_encoder",
+                local_files_only=local_only,
+                cache_dir=cache_dir,
+            ).to(device)
+            self.vae = AutoencoderKL.from_pretrained(
+                model_path,
+                subfolder="vae",
+                local_files_only=local_only,
+                cache_dir=cache_dir,
+            ).to(device)
+            self.unet = UNet2DConditionModel.from_pretrained(
+                model_path,
+                subfolder="unet",
+                local_files_only=local_only,
+                cache_dir=cache_dir,
+            ).to(device)
+            self.scheduler = DDIMScheduler.from_pretrained(
+                model_path,
+                subfolder="scheduler",
+                local_files_only=local_only,
+                cache_dir=cache_dir,
+            )
+            self.text_encoder.eval()
+            self.vae.eval()
+            self.unet.eval()
+            for mod in (self.text_encoder, self.vae, self.unet):
+                for param in mod.parameters():
+                    param.requires_grad_(False)
+            self.empty_prompt_emb = self._encode_prompt([""])
+            self.text_z = self._encode_prompt([prompt])
+            print(f"[SDS] model source = {'local' if local_only else 'huggingface-download'} : {model_path}")
+        except Exception as exc:
+            print(f"[SDS] load failed ({exc}), disable SDS and continue training")
+            self.disabled = True
+            return
+
+    def _encode_prompt(self, prompts):
+        with torch.no_grad():
+            inputs = self.tokenizer(
+                prompts,
+                padding="max_length",
+                max_length=self.tokenizer.model_max_length,
+                return_tensors="pt",
+            )
+            return self.text_encoder(inputs.input_ids.to(self.device))[0]
+
+    def sds_loss(self, image, sds_resolution=512, guidance_scale=100.0):
+        img = image.unsqueeze(0)
+        img = torch.nn.functional.interpolate(
+            img, (sds_resolution, sds_resolution), mode="bilinear", align_corners=False
+        )
+        img = img.clamp(0.0, 1.0)
+        img = img * 2.0 - 1.0
+        with torch.cuda.amp.autocast(enabled=True):
+            latents = self.vae.encode(img).latent_dist.sample()
+        scale = getattr(self.vae.config, "scaling_factor", 0.18215)
+        latents = latents * scale
+        t = torch.randint(0, self.scheduler.config.num_train_timesteps, (1,), device=latents.device).long()
+        noise = torch.randn_like(latents)
+        latents_noisy = self.scheduler.add_noise(latents, noise, t)
+        latents_in = torch.cat([latents_noisy, latents_noisy], dim=0)
+        prompt_emb = torch.cat([self.empty_prompt_emb, self.text_z], dim=0)
+        with torch.no_grad(), torch.cuda.amp.autocast(enabled=True):
+            noise_pred = self.unet(latents_in, t, encoder_hidden_states=prompt_emb).sample
+        noise_pred_uncond, noise_pred_text = noise_pred.chunk(2)
+        noise_pred = noise_pred_uncond + guidance_scale * (noise_pred_text - noise_pred_uncond)
+        alpha = self.scheduler.alphas_cumprod[t].to(latents.device)
+        while alpha.ndim < latents.ndim:
+            alpha = alpha.view(-1, 1, 1, 1)
+        weight = (1.0 - alpha)
+        grad = weight * (noise_pred - noise)
+        return (grad.detach() * latents).mean()
+
 def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from, near_range):
     first_iter = 0
     tb_writer = prepare_output_and_logger(dataset, opt)
@@ -43,6 +136,15 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     scene = Scene(dataset, gaussians)
     scene_sprical = RenderScene(dataset, gaussians, spiral=True)
     gaussians.training_setup(opt)
+    sds_helper = None
+    if getattr(opt, "sds_enable", False):
+        sds_helper = SDSHelper(
+            getattr(opt, "sds_model_path", ""),
+            device="cuda",
+            prompt=getattr(opt, "sds_prompt", "a photo of a green fern plant"),
+        )
+        if getattr(sds_helper, "disabled", False):
+            sds_helper = None
     if checkpoint:
         # (model_params, first_iter) = torch.load(checkpoint)
         # gaussians.restore(model_params, opt)
@@ -163,6 +265,34 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
         loss_reg += opt.shape_pena*shape_pena + opt.scale_pena*scale_pena + opt.opa_pena*opa_pena
         loss += loss_reg
+        # [SDS] extra prior loss with warmup
+        interval = max(getattr(opt, "sds_interval", 1), 1)
+        if sds_helper is not None and iteration > getattr(opt, "sds_start_iter", 7000) and (iteration % interval == 0):
+            warmup = max(getattr(opt, "sds_warmup", 1000), 1)
+            w_sds = getattr(opt, "sds_weight", 0.0) * min((iteration - opt.sds_start_iter) / float(warmup), 1.0)
+            view_inv = torch.inverse(viewpoint_cam.world_view_transform)
+            perturb_mag = 0.01 * scene.cameras_extent
+            delta = (torch.rand(3, device=view_inv.device) - 0.5) * 2.0 * perturb_mag
+            view_inv_pert = view_inv.clone()
+            view_inv_pert[3, :3] += delta
+            world_view_pert = torch.inverse(view_inv_pert)
+            full_proj_pert = (world_view_pert.unsqueeze(0).bmm(viewpoint_cam.projection_matrix.unsqueeze(0))).squeeze(0)
+            sds_cam = MiniCam(
+                viewpoint_cam.image_width,
+                viewpoint_cam.image_height,
+                viewpoint_cam.FoVy,
+                viewpoint_cam.FoVx,
+                viewpoint_cam.znear,
+                viewpoint_cam.zfar,
+                world_view_pert,
+                full_proj_pert,
+            )
+            sds_render = render(sds_cam, gaussians, pipe, background)
+            sds_image = sds_render["render"]
+            loss_sds = sds_helper.sds_loss(sds_image, sds_resolution=getattr(opt, "sds_resolution", 512))
+            if iteration % 200 == 0:
+                print(f"[SDS] iter={iteration} loss_sds={loss_sds.item():.6f} w_sds={w_sds:.6f} interval={interval}")
+            loss += (w_sds * interval) * loss_sds
 
         loss.backward()
         
@@ -379,12 +509,20 @@ if __name__ == "__main__":
     # parser.add_argument('--port', type=int, default=6009)
     parser.add_argument('--debug_from', type=int, default=-1)
     parser.add_argument('--detect_anomaly', action='store_true', default=False)
-    parser.add_argument("--test_iterations", nargs="+", type=int, default=[7000])
-    parser.add_argument("--save_iterations", nargs="+", type=int, default=[7000])
+    parser.add_argument("--test_iterations", nargs="+", type=int, default=[7000, 30000])
+    parser.add_argument("--save_iterations", nargs="+", type=int, default=[7000, 30000])
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[])
     parser.add_argument("--start_checkpoint", type=str, default = None)
     parser.add_argument("--near", type=int, default=0)
+    parser.add_argument("--sds_enable", action="store_true", default=False)
+    parser.add_argument("--sds_model_path", type=str, default="")
+    parser.add_argument("--sds_start_iter", type=int, default=7000)
+    parser.add_argument("--sds_warmup", type=int, default=1000)
+    parser.add_argument("--sds_weight", type=float, default=0.001)
+    parser.add_argument("--sds_prompt", type=str, default="a photo of a green fern plant")
+    parser.add_argument("--sds_resolution", type=int, default=512)
+    parser.add_argument("--sds_interval", type=int, default=1)
     args = parser.parse_args(sys.argv[1:])
     args.save_iterations.append(args.iterations)
     # args.checkpoint_iterations.append(args.iterations)
@@ -397,7 +535,17 @@ if __name__ == "__main__":
     # Start GUI server, configure and run training
     # network_gui.init(args.ip, args.port)
     torch.autograd.set_detect_anomaly(args.detect_anomaly)
-    training(lp.extract(args), op.extract(args), pp.extract(args), args.test_iterations, args.save_iterations, args.checkpoint_iterations, args.start_checkpoint, args.debug_from, args.near)
+    opt = op.extract(args)
+    # [SDS] propagate SDS params into optimization args
+    opt.sds_enable = getattr(args, "sds_enable", False)
+    opt.sds_model_path = getattr(args, "sds_model_path", "")
+    opt.sds_start_iter = getattr(args, "sds_start_iter", 7000)
+    opt.sds_warmup = getattr(args, "sds_warmup", 1000)
+    opt.sds_weight = getattr(args, "sds_weight", 0.001)
+    opt.sds_prompt = getattr(args, "sds_prompt", "a photo of a green fern plant")
+    opt.sds_resolution = getattr(args, "sds_resolution", 512)
+    opt.sds_interval = getattr(args, "sds_interval", 1)
+    training(lp.extract(args), opt, pp.extract(args), args.test_iterations, args.save_iterations, args.checkpoint_iterations, args.start_checkpoint, args.debug_from, args.near)
 
     # All done
     print("\nTraining complete.")

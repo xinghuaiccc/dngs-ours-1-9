@@ -21,3 +21,4 @@ data/dtu/*
 data/llff/*
 data/nerf_synthetic/*
 !*.gitkeep
+log-new-1.txt

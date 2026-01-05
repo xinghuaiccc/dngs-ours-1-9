@@ -203,6 +203,55 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
                 # if iteration % opt.opacity_reset_interval == 0 or (dataset.white_background and iteration == opt.densify_from_iter):
                 #     gaussians.reset_opacity()
 
+            # =========================================================================
+            # 【Step 1 创新点】：视角感知几何剪枝 (View-Aware Geometric Pruning)
+            # 对应方案 3：清除稀疏视角下产生的浮游伪影
+            # =========================================================================
+
+            # 策略：中后期(2000轮后)开始强力清扫
+            if iteration > 2000 and iteration % 500 == 0:
+
+                # 1. 获取当前高斯球的属性
+                opacities = gaussians.get_opacity
+                scales = gaussians.get_scaling
+
+                # --- 策略 A: 渐进式透明度门限 ---
+                # DNGaussian 默认是 0.005，这对于稀疏视角太宽容了。
+                # 我们随着训练进行，慢慢提高门限，最后提高到 0.02 甚至 0.05
+                # 逻辑：真正的物体（墙、叶子）是不透明的(>0.8)，只有噪点是半透明的。
+
+                # 动态计算门限：从 0.01 开始，每 1000 轮增加 0.01，封顶 0.05
+                prune_thresh = min(0.05, 0.01 + (iteration - 2000) * 0.00002)
+
+                mask_opacity = (opacities < prune_thresh).squeeze()
+
+                # --- 策略 B: 膨胀几何抑制 (Scale Awareness) ---
+                # 浮游物还有一个特征：体积特别大（Scale 大），因为它想用一个球遮住一大片背景
+                # 计算体积的近似值 (三个轴的乘积)
+                volumes = torch.prod(scales, dim=1)
+
+                # 规则：如果体积 > 0.01 (很大) 且 透明度 < 0.3 (不够实)，认为是背景噪声
+                mask_big_floater = (volumes > 0.01) & (opacities < 0.3).squeeze()
+
+                # --- 策略 C: 极长几何抑制 (Needle Awareness) ---
+                # 稀疏视角常产生指向相机的"长刺"。如果一个轴特别长，其他轴特别短，也是伪影。
+                sorted_scales, _ = torch.sort(scales, dim=1)
+                # 最大轴 / 最小轴 > 50 倍，且最大轴 > 0.1
+                mask_needle = (sorted_scales[:, 2] / sorted_scales[:, 0] > 50.0) & (
+                            sorted_scales[:, 2] > 0.1) & (opacities < 0.3).squeeze()
+
+                # 组合剪枝掩码 (只要满足 A, B, C 任意一条就杀)
+                prune_mask = mask_opacity | mask_big_floater | mask_needle
+
+                # 执行剪枝
+                if prune_mask.sum() > 0:
+                    gaussians.prune_points(prune_mask)
+                    # 打印日志让我们知道它在工作 (可选)
+                    # print(f"[ITER {iteration}] Pruning: Removed {prune_mask.sum()} floaters (Thresh: {prune_thresh:.3f})")
+
+            # =======================================================
+
+
             if (iteration - 1) % 25 == 0:
                 viewpoint_sprical_cam = viewpoint_sprical_stack.pop(0)
                 mask_near = None

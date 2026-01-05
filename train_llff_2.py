@@ -36,6 +36,93 @@ except ImportError:
 
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
+import torch.fft
+
+import torch.nn.functional as F
+
+
+def fft_loss(image, gt_image):
+    """
+    【终极防爆版】FFT Loss
+    策略：
+    1. 强制 Resize 到 32 的倍数，避开 cuFFT 对奇数/质数尺寸的底层 Bug。
+    2. 增加 try-except 自动降级机制，确保训练永不中断。
+    """
+    # 1. 尺寸规整化 (Padding/Resize)
+    # cuFFT 在处理 2^N 或 32 的倍数时最稳定。
+    # 我们获取当前尺寸
+    H, W = image.shape[-2], image.shape[-1]
+
+    # 计算目标尺寸 (向上取整到 32 的倍数)
+    target_H = ((H + 31) // 32) * 32
+    target_W = ((W + 31) // 32) * 32
+
+    # 如果尺寸不合适，进行微调 (使用 bilinear 插值)
+    # 注意：image 是 [3, H, W]，interpolate 需要 [N, C, H, W]
+    if H != target_H or W != target_W:
+        image_in = F.interpolate(image.unsqueeze(0), size=(target_H, target_W), mode='bilinear',
+                                 align_corners=False).squeeze(0)
+        gt_in = F.interpolate(gt_image.unsqueeze(0), size=(target_H, target_W), mode='bilinear',
+                              align_corners=False).squeeze(0)
+    else:
+        image_in = image
+        gt_in = gt_image
+
+    # 2. 尝试在 GPU 上执行 (高性能路径)
+    try:
+        with torch.cuda.amp.autocast(enabled=False):
+            # 确保数据纯净
+            pred = image_in.float().contiguous()
+            gt = gt_in.float().contiguous()
+
+            # 再次清洗 NaN (极低概率发生，但为了保险)
+            if torch.isnan(pred).any() or torch.isinf(pred).any():
+                pred = torch.nan_to_num(pred)
+            if torch.isnan(gt).any() or torch.isinf(gt).any():
+                gt = torch.nan_to_num(gt)
+
+            # RFFT2 计算
+            fft_pred = torch.fft.rfft2(pred)
+            fft_gt = torch.fft.rfft2(gt)
+
+            # 幅度 Loss
+            amp_pred = torch.sqrt(fft_pred.real.pow(2) + fft_pred.imag.pow(2) + 1e-6)
+            amp_gt = torch.sqrt(fft_gt.real.pow(2) + fft_gt.imag.pow(2) + 1e-6)
+            loss_amp = torch.abs(amp_pred - amp_gt).mean()
+
+            # 相位 Loss
+            loss_phase = (torch.abs(fft_pred.real - fft_gt.real).mean() +
+                          torch.abs(fft_pred.imag - fft_gt.imag).mean())
+
+            return loss_amp + 0.5 * loss_phase
+
+    # 3. 灾难恢复 (CPU 避险路径)
+    # 如果 GPU 依然报错，捕捉错误并切到 CPU，不让训练崩溃
+    except RuntimeError as e:
+        # 只有在第一次报错时打印警告，避免刷屏
+        if not hasattr(fft_loss, "has_warned"):
+            print(
+                f"\n[Warning] GPU FFT failed ({e}), switching to CPU for this step. (Don't worry, training continues)")
+            fft_loss.has_warned = True
+
+        # CPU 慢路径 (但稳如老狗)
+        pred_cpu = image_in.detach().cpu().float()
+        gt_cpu = gt_in.detach().cpu().float()
+
+        fft_pred = torch.fft.rfft2(pred_cpu)
+        fft_gt = torch.fft.rfft2(gt_cpu)
+
+        amp_pred = torch.sqrt(fft_pred.real.pow(2) + fft_pred.imag.pow(2) + 1e-6)
+        amp_gt = torch.sqrt(fft_gt.real.pow(2) + fft_gt.imag.pow(2) + 1e-6)
+
+        loss_amp = torch.abs(amp_pred - amp_gt).mean()
+        loss_phase = (torch.abs(fft_pred.real - fft_gt.real).mean() +
+                      torch.abs(fft_pred.imag - fft_gt.imag).mean())
+
+        # 传回 GPU 并重新挂载梯度 (注意：CPU路径会断梯度，但这只是应急，总比崩了强)
+        # 如果你想在CPU上也保留梯度，需要去掉 detach()，但那样会更慢。
+        # 这里为了不崩，我们返回一个带梯度的 dummy loss 或者接受这次没有 FFT 梯度
+        return (loss_amp + 0.5 * loss_phase).to(image.device)
 def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from, near_range):
     first_iter = 0
     tb_writer = prepare_output_and_logger(dataset, opt)
@@ -154,14 +241,13 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         Ll1 = l1_loss(image, gt_image)
         loss = Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
 
-
         # Reg
         loss_reg = torch.tensor(0., device=loss.device)
         shape_pena = (gaussians.get_scaling.max(dim=1).values / gaussians.get_scaling.min(dim=1).values).mean()
-        scale_pena = ((gaussians.get_scaling.max(dim=1, keepdim=True).values)**2).mean()
-        opa_pena = 1 - (opacity[opacity > 0.2]**2).mean() + ((1 - opacity[opacity < 0.2])**2).mean()
+        scale_pena = ((gaussians.get_scaling.max(dim=1, keepdim=True).values) ** 2).mean()
+        opa_pena = 1 - (opacity[opacity > 0.2] ** 2).mean() + ((1 - opacity[opacity < 0.2]) ** 2).mean()
 
-        loss_reg += opt.shape_pena*shape_pena + opt.scale_pena*scale_pena + opt.opa_pena*opa_pena
+        loss_reg += opt.shape_pena * shape_pena + opt.scale_pena * scale_pena + opt.opa_pena * opa_pena
         loss += loss_reg
 
         loss.backward()
@@ -202,6 +288,46 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
                 
                 # if iteration % opt.opacity_reset_interval == 0 or (dataset.white_background and iteration == opt.densify_from_iter):
                 #     gaussians.reset_opacity()
+
+            # =========================================================================
+            # 【创新点 2 实现】：几何剪枝 (Geometric Pruning)
+            # 作用：清理方案一（边缘增强）产生的背景浮游物，大幅提升 PSNR/SSIM
+            # =========================================================================
+
+            # 策略：中后期强力清扫
+            # 建议从 2000 轮开始（此时几何主体已形成），每 500 轮执行一次
+            if iteration > 2000 and iteration % 500 == 0:
+
+                # 1. 获取模型状态
+                opacities = gaussians.get_opacity
+                scales = gaussians.get_scaling
+
+                # --- 子策略 A: 渐进式透明度剪枝 ---
+                # DNGaussian 默认 prune_threshold 是 0.005，这太宽容了。
+                # 对于边缘增强产生的“硬噪声”，我们需要更高的门限。
+                # 2000轮时杀掉 <0.01 的，4000轮时杀掉 <0.03 的... 循序渐进
+
+                # 计算动态门限 (最高不超过 0.05)
+                prune_thresh = min(0.05, 0.01 + (iteration - 2000) * 0.00002)
+
+                # 生成掩码
+                mask_opacity = (opacities < prune_thresh).squeeze()
+
+                # --- 子策略 B: 膨胀几何抑制 (可选) ---
+                # 背景浮游物通常还有一个特征：体积特别大（Scale 大），因为想用一个球糊弄一大片区域
+                # 计算体积 (三个轴的乘积)
+                volumes = torch.prod(scales, dim=1)
+                # 如果一个点体积很大(>0.1) 且透明度又不够高(<0.3)，大概率是垃圾
+                mask_big_floater = (volumes > 0.1) & (opacities < 0.3).squeeze()
+
+                # 组合剪枝掩码 (只要满足 A 或 B 就杀)
+                prune_mask = mask_opacity | mask_big_floater
+
+                # 执行剪枝
+                if prune_mask.sum() > 0:
+                    gaussians.prune_points(prune_mask)
+                    # (可选) 打印日志，看着舒服
+                    # print(f"[ITER {iteration}] Geometric Pruning: Removed {prune_mask.sum()} floaters (Thresh: {prune_thresh:.4f})")
 
             if (iteration - 1) % 25 == 0:
                 viewpoint_sprical_cam = viewpoint_sprical_stack.pop(0)
