@@ -1,0 +1,1762 @@
+Processing ./gridencoder
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Processing ./shencoder
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Building wheels for collected packages: gridencoder, shencoder
+  DEPRECATION: Building 'gridencoder' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'gridencoder'. Discussion can be found at https://github.com/pypa/pip/issues/6334
+  Building wheel for gridencoder (setup.py): started
+  Building wheel for gridencoder (setup.py): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × python setup.py bdist_wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [862 lines of output]
+      
+      A module that was compiled using NumPy 1.x cannot be run in
+      NumPy 2.0.2 as it may crash. To support both 1.x and 2.x
+      versions of NumPy, modules must be compiled with NumPy 2.0.
+      Some module may need to rebuild instead e.g. with 'pybind11>=2.12'.
+      
+      If you are a user of the module, the easiest solution will be to
+      downgrade to 'numpy<2' or try to upgrade the affected module.
+      We expect that some modules will need time to support NumPy 2.
+      
+      Traceback (most recent call last):  File "<string>", line 2, in <module>
+        File "<pip-setuptools-caller>", line 35, in <module>
+        File "/root/dngs-origin/gridencoder/setup.py", line 3, in <module>
+          from torch.utils.cpp_extension import BuildExtension, CUDAExtension
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/__init__.py", line 1382, in <module>
+          from .functional import *  # noqa: F403
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/functional.py", line 7, in <module>
+          import torch.nn.functional as F
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/nn/__init__.py", line 1, in <module>
+          from .modules import *  # noqa: F403
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/nn/modules/__init__.py", line 35, in <module>
+          from .transformer import TransformerEncoder, TransformerDecoder, \
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/nn/modules/transformer.py", line 20, in <module>
+          device: torch.device = torch.device(torch._C._get_default_device()),  # torch.device('cpu'),
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/nn/modules/transformer.py:20: UserWarning: Failed to initialize NumPy: _ARRAY_API not found (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:84.)
+        device: torch.device = torch.device(torch._C._get_default_device()),  # torch.device('cpu'),
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py:28: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+        from pkg_resources import packaging  # type: ignore[attr-defined]
+      running bdist_wheel
+      running build
+      running build_ext
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py:424: UserWarning: There are no g++ version bounds defined for CUDA version 11.8
+        warnings.warn(f'There are no {compiler_name} version bounds defined for CUDA version {cuda_str_version}')
+      building '_gridencoder' extension
+      creating /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/gridencoder/src
+      Emitting ninja build file /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/build.ninja...
+      Compiling objects...
+      Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+      [1/2] /usr/local/cuda-11.8/bin/nvcc  -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/TH -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/THC -I/usr/local/cuda-11.8/include -I/root/anaconda3/envs/dngaussian-2/include/python3.9 -c -c /root/dngs-origin/gridencoder/src/gridencoder.cu -o /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/gridencoder/src/gridencoder.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -std=c++14 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__ -U__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_gridencoder -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89
+      FAILED: /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/gridencoder/src/gridencoder.o
+      /usr/local/cuda-11.8/bin/nvcc  -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/TH -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/THC -I/usr/local/cuda-11.8/include -I/root/anaconda3/envs/dngaussian-2/include/python3.9 -c -c /root/dngs-origin/gridencoder/src/gridencoder.cu -o /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/gridencoder/src/gridencoder.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -std=c++14 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__ -U__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_gridencoder -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/string_view.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/StringUtil.h:6,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/Exception.h:5,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/Generator.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/CPUGeneratorImpl.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Context.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/cuda/CUDAContext.h:18,
+                       from /root/dngs-origin/gridencoder/src/gridencoder.cu:5:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/C++17.h:27:2: error: #error You need C++17 to compile PyTorch
+         27 | #error You need C++17 to compile PyTorch
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/torch.h:3,
+                       from /root/dngs-origin/gridencoder/src/gridencoder.cu:6:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:4:2: error: #error C++17 or later compatible compiler is required to use PyTorch.
+          4 | #error C++17 or later compatible compiler is required to use PyTorch.
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/torch.h:3,
+                       from /root/dngs-origin/gridencoder/src/gridencoder.cu:6:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/ATen.h:4:2: error: #error C++17 or later compatible compiler is required to use ATen.
+          4 | #error C++17 or later compatible compiler is required to use ATen.
+            |  ^~~~~
+      [2/2] c++ -MMD -MF /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/gridencoder/src/bindings.o.d -pthread -B /root/anaconda3/envs/dngaussian-2/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /root/anaconda3/envs/dngaussian-2/include -fPIC -O2 -isystem /root/anaconda3/envs/dngaussian-2/include -fPIC -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/TH -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/THC -I/usr/local/cuda-11.8/include -I/root/anaconda3/envs/dngaussian-2/include/python3.9 -c -c /root/dngs-origin/gridencoder/src/bindings.cpp -o /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/gridencoder/src/bindings.o -O3 -std=c++14 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_gridencoder -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/gridencoder/src/bindings.o
+      c++ -MMD -MF /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/gridencoder/src/bindings.o.d -pthread -B /root/anaconda3/envs/dngaussian-2/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /root/anaconda3/envs/dngaussian-2/include -fPIC -O2 -isystem /root/anaconda3/envs/dngaussian-2/include -fPIC -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/TH -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/THC -I/usr/local/cuda-11.8/include -I/root/anaconda3/envs/dngaussian-2/include/python3.9 -c -c /root/dngs-origin/gridencoder/src/bindings.cpp -o /root/dngs-origin/gridencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/gridencoder/src/bindings.o -O3 -std=c++14 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_gridencoder -D_GLIBCXX_USE_CXX11_ABI=0
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:4:2: error: #error C++17 or later compatible compiler is required to use PyTorch.
+          4 | #error C++17 or later compatible compiler is required to use PyTorch.
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/string_view.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/StringUtil.h:6,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/Exception.h:5,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/core/Device.h:5,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/TensorBody.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/Tensor.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Tensor.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/function_hook.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/cpp_hook.h:2,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/variable.h:6,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/C++17.h:27:2: error: #error You need C++17 to compile PyTorch
+         27 | #error You need C++17 to compile PyTorch
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/ATen.h:4:2: error: #error C++17 or later compatible compiler is required to use ATen.
+          4 | #error C++17 or later compatible compiler is required to use ATen.
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/typeid.h:17,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/core/ScalarTypeToTypeMeta.h:5,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/TensorBody.h:18,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/Tensor.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Tensor.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/function_hook.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/cpp_hook.h:2,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/variable.h:6,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/irange.h: In member function ‘bool c10::detail::integer_iterator<I, one_sided, <anonymous> >::operator==(const c10::detail::integer_iterator<I, one_sided, <anonymous> >&) const’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/irange.h:50:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         50 |     if constexpr (one_sided) {
+            |        ^~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue.h:1499,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/List_inl.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/List.h:490,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/IListRef_inl.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/IListRef.h:632,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/WrapDimUtils.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/TensorNames.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/NamedTensorUtils.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/variable.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h: In lambda function:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:12: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |            ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:30: error: ‘is_convertible_v’ is not a member of ‘std’; did you mean ‘is_convertible’?
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |                              ^~~~~~~~~~~~~~~~
+            |                              is_convertible
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:91: error: expected ‘(’ before ‘,’ token
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |                                                                                           ^
+            |                                                                                           (
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:111: error: expected primary-expression before ‘>’ token
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |                                                                                                               ^
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:112: error: expected primary-expression before ‘)’ token
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |                                                                                                                ^
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1062:16: warning: structured bindings only available with ‘-std=c++17’ or ‘-std=gnu++17’
+       1062 |           auto [ivalue, storages] = cb(parentFut);
+            |                ^
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction_impl.h:1,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction.h:251,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/op_registration/op_registration.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/library.h:68,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd_not_implemented_fallback.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h: In static member function ‘static Result c10::impl::BoxedKernelWrapper<Result(Args ...), typename std::enable_if<((c10::guts::conjunction<c10::impl::can_box<Args>...>::value && c10::guts::conjunction<c10::guts::disjunction<c10::impl::has_ivalue_to<T, void>, std::is_same<void, ReturnType> >, c10::guts::negation<std::is_lvalue_reference<_Tp> > >::value) && (! c10::impl::is_tuple_of_mutable_tensor_refs<Result>::value)), void>::type>::call(const c10::BoxedKernel&, const c10::OperatorHandle&, c10::DispatchKeySet, Args ...)’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:25: error: ‘is_same_v’ is not a member of ‘std’; did you mean ‘is_same’?
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |                         ^~~~~~~~~
+            |                         is_same
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:35: error: expected primary-expression before ‘void’
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |                                   ^~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:34: warning: logical not is only applied to the left hand side of comparison [-Wlogical-not-parentheses]
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |                                  ^
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:35: error: expected ‘)’ before ‘void’
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |                  ~                ^~~~
+            |                                   )
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction_impl.h:2,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction.h:251,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/op_registration/op_registration.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/library.h:68,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd_not_implemented_fallback.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h: In constructor ‘c10::impl::assert_is_valid_input_type<T, AllowDeprecatedTypes, Enable>::assert_is_valid_input_type()’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h:109:10: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        109 |       if constexpr (guts::typelist::contains<supported_primitive_arg_types, T>::value) {
+            |          ^~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction_impl.h:2,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction.h:251,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/op_registration/op_registration.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/library.h:68,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd_not_implemented_fallback.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h: In constructor ‘c10::impl::assert_is_valid_output_type<T, AllowDeprecatedTypes, Enable>::assert_is_valid_output_type()’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h:215:10: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        215 |       if constexpr(guts::typelist::contains<supported_primitive_arg_types, T>::value) {
+            |          ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h: In static member function ‘static void c10::impl::make_boxed_from_unboxed_functor<KernelFunctor, AllowDeprecatedTypes>::call(c10::OperatorKernel*, const c10::OperatorHandle&, c10::DispatchKeySet, c10::Stack*)’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h:575:10: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        575 |       if constexpr (has_outputs) {
+            |          ^~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/ATen.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h: In lambda function:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:391:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        391 |   AT_DISPATCH_CASE(at::ScalarType::Byte, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:392:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        392 |   AT_DISPATCH_CASE(at::ScalarType::Char, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:393:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        393 |   AT_DISPATCH_CASE(at::ScalarType::Int, __VA_ARGS__)  \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:394:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        394 |   AT_DISPATCH_CASE(at::ScalarType::Long, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:395:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        395 |   AT_DISPATCH_CASE(at::ScalarType::Short, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:233:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        233 |   AT_DISPATCH_CASE(at::ScalarType::Double, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:412:3: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        412 |   AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:234:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        234 |   AT_DISPATCH_CASE(at::ScalarType::Float, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:412:3: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        412 |   AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:515:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        515 |   AT_DISPATCH_CASE(SCALARTYPE1, __VA_ARGS__)    \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:516:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        516 |   AT_DISPATCH_CASE(SCALARTYPE2, __VA_ARGS__)    \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:517:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        517 |   AT_DISPATCH_CASE(SCALARTYPE3, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h: In lambda function:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:391:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        391 |   AT_DISPATCH_CASE(at::ScalarType::Byte, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:392:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        392 |   AT_DISPATCH_CASE(at::ScalarType::Char, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:393:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        393 |   AT_DISPATCH_CASE(at::ScalarType::Int, __VA_ARGS__)  \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:394:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        394 |   AT_DISPATCH_CASE(at::ScalarType::Long, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:395:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        395 |   AT_DISPATCH_CASE(at::ScalarType::Short, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:233:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        233 |   AT_DISPATCH_CASE(at::ScalarType::Double, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:412:3: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        412 |   AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:234:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        234 |   AT_DISPATCH_CASE(at::ScalarType::Float, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:412:3: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        412 |   AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:515:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        515 |   AT_DISPATCH_CASE(SCALARTYPE1, __VA_ARGS__)    \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:516:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        516 |   AT_DISPATCH_CASE(SCALARTYPE2, __VA_ARGS__)    \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:517:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        517 |   AT_DISPATCH_CASE(SCALARTYPE3, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:12,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/dispatch/Dispatcher.h: In static member function ‘static Return c10::Dispatcher::callWithDispatchKeySlowPath(const c10::TypedOperatorHandle<Return(Args ...)>&, at::StepCallbacks&, c10::DispatchKeySet, const c10::KernelFunction&, Args ...)’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/dispatch/Dispatcher.h:597:6: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        597 |   if constexpr (num_boxed_args != 0) {
+            |      ^~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/ATen.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/gridencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/nn/functional/activation.h: In lambda function:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:233:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        233 |   AT_DISPATCH_CASE(at::ScalarType::Double, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:237:34: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        237 |   AT_DISPATCH_SWITCH(TYPE, NAME, AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__))
+            |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/nn/functional/activation.h:895:27: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES’
+        895 |     attn_output_weights = AT_DISPATCH_FLOATING_TYPES(
+            |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:234:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        234 |   AT_DISPATCH_CASE(at::ScalarType::Float, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:237:34: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        237 |   AT_DISPATCH_SWITCH(TYPE, NAME, AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__))
+            |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/nn/functional/activation.h:895:27: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES’
+        895 |     attn_output_weights = AT_DISPATCH_FLOATING_TYPES(
+            |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      ninja: build stopped: subcommand failed.
+      Traceback (most recent call last):
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 2100, in _run_ninja_build
+          subprocess.run(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/subprocess.py", line 528, in run
+          raise CalledProcessError(retcode, process.args,
+      subprocess.CalledProcessError: Command '['ninja', '-v']' returned non-zero exit status 1.
+      
+      The above exception was the direct cause of the following exception:
+      
+      Traceback (most recent call last):
+        File "<string>", line 2, in <module>
+        File "<pip-setuptools-caller>", line 35, in <module>
+        File "/root/dngs-origin/gridencoder/setup.py", line 32, in <module>
+          setup(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/__init__.py", line 115, in setup
+          return distutils.core.setup(**attrs)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/core.py", line 186, in setup
+          return run_commands(dist)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/core.py", line 202, in run_commands
+          dist.run_commands()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/dist.py", line 1002, in run_commands
+          self.run_command(cmd)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/command/bdist_wheel.py", line 370, in run
+          self.run_command("build")
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/cmd.py", line 357, in run_command
+          self.distribution.run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build.py", line 135, in run
+          self.run_command(cmd_name)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/cmd.py", line 357, in run_command
+          self.distribution.run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/command/build_ext.py", line 96, in run
+          _build_ext.run(self)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build_ext.py", line 368, in run
+          self.build_extensions()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 873, in build_extensions
+          build_ext.build_extensions(self)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build_ext.py", line 484, in build_extensions
+          self._build_extensions_serial()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build_ext.py", line 510, in _build_extensions_serial
+          self.build_extension(ext)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/command/build_ext.py", line 261, in build_extension
+          _build_ext.build_extension(self, ext)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build_ext.py", line 565, in build_extension
+          objects = self.compiler.compile(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 686, in unix_wrap_ninja_compile
+          _write_ninja_file_and_compile_objects(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 1774, in _write_ninja_file_and_compile_objects
+          _run_ninja_build(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 2116, in _run_ninja_build
+          raise RuntimeError(message) from e
+      RuntimeError: Error compiling objects for extension
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for gridencoder
+  Running setup.py clean for gridencoder
+  DEPRECATION: Building 'shencoder' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'shencoder'. Discussion can be found at https://github.com/pypa/pip/issues/6334
+  Building wheel for shencoder (setup.py): started
+  Building wheel for shencoder (setup.py): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × python setup.py bdist_wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [862 lines of output]
+      
+      A module that was compiled using NumPy 1.x cannot be run in
+      NumPy 2.0.2 as it may crash. To support both 1.x and 2.x
+      versions of NumPy, modules must be compiled with NumPy 2.0.
+      Some module may need to rebuild instead e.g. with 'pybind11>=2.12'.
+      
+      If you are a user of the module, the easiest solution will be to
+      downgrade to 'numpy<2' or try to upgrade the affected module.
+      We expect that some modules will need time to support NumPy 2.
+      
+      Traceback (most recent call last):  File "<string>", line 2, in <module>
+        File "<pip-setuptools-caller>", line 35, in <module>
+        File "/root/dngs-origin/shencoder/setup.py", line 3, in <module>
+          from torch.utils.cpp_extension import BuildExtension, CUDAExtension
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/__init__.py", line 1382, in <module>
+          from .functional import *  # noqa: F403
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/functional.py", line 7, in <module>
+          import torch.nn.functional as F
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/nn/__init__.py", line 1, in <module>
+          from .modules import *  # noqa: F403
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/nn/modules/__init__.py", line 35, in <module>
+          from .transformer import TransformerEncoder, TransformerDecoder, \
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/nn/modules/transformer.py", line 20, in <module>
+          device: torch.device = torch.device(torch._C._get_default_device()),  # torch.device('cpu'),
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/nn/modules/transformer.py:20: UserWarning: Failed to initialize NumPy: _ARRAY_API not found (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:84.)
+        device: torch.device = torch.device(torch._C._get_default_device()),  # torch.device('cpu'),
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py:28: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+        from pkg_resources import packaging  # type: ignore[attr-defined]
+      running bdist_wheel
+      running build
+      running build_ext
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py:424: UserWarning: There are no g++ version bounds defined for CUDA version 11.8
+        warnings.warn(f'There are no {compiler_name} version bounds defined for CUDA version {cuda_str_version}')
+      building '_shencoder' extension
+      creating /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/shencoder/src
+      Emitting ninja build file /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/build.ninja...
+      Compiling objects...
+      Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+      [1/2] /usr/local/cuda-11.8/bin/nvcc  -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/TH -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/THC -I/usr/local/cuda-11.8/include -I/root/anaconda3/envs/dngaussian-2/include/python3.9 -c -c /root/dngs-origin/shencoder/src/shencoder.cu -o /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/shencoder/src/shencoder.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -std=c++14 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__ -U__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_shencoder -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89
+      FAILED: /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/shencoder/src/shencoder.o
+      /usr/local/cuda-11.8/bin/nvcc  -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/TH -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/THC -I/usr/local/cuda-11.8/include -I/root/anaconda3/envs/dngaussian-2/include/python3.9 -c -c /root/dngs-origin/shencoder/src/shencoder.cu -o /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/shencoder/src/shencoder.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -std=c++14 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__ -U__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_shencoder -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/string_view.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/StringUtil.h:6,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/Exception.h:5,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/Generator.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/CPUGeneratorImpl.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Context.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/cuda/CUDAContext.h:18,
+                       from /root/dngs-origin/shencoder/src/shencoder.cu:7:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/C++17.h:27:2: error: #error You need C++17 to compile PyTorch
+         27 | #error You need C++17 to compile PyTorch
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/torch.h:3,
+                       from /root/dngs-origin/shencoder/src/shencoder.cu:8:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:4:2: error: #error C++17 or later compatible compiler is required to use PyTorch.
+          4 | #error C++17 or later compatible compiler is required to use PyTorch.
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/torch.h:3,
+                       from /root/dngs-origin/shencoder/src/shencoder.cu:8:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/ATen.h:4:2: error: #error C++17 or later compatible compiler is required to use ATen.
+          4 | #error C++17 or later compatible compiler is required to use ATen.
+            |  ^~~~~
+      [2/2] c++ -MMD -MF /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/shencoder/src/bindings.o.d -pthread -B /root/anaconda3/envs/dngaussian-2/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /root/anaconda3/envs/dngaussian-2/include -fPIC -O2 -isystem /root/anaconda3/envs/dngaussian-2/include -fPIC -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/TH -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/THC -I/usr/local/cuda-11.8/include -I/root/anaconda3/envs/dngaussian-2/include/python3.9 -c -c /root/dngs-origin/shencoder/src/bindings.cpp -o /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/shencoder/src/bindings.o -O3 -std=c++14 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_shencoder -D_GLIBCXX_USE_CXX11_ABI=0
+      FAILED: /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/shencoder/src/bindings.o
+      c++ -MMD -MF /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/shencoder/src/bindings.o.d -pthread -B /root/anaconda3/envs/dngaussian-2/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /root/anaconda3/envs/dngaussian-2/include -fPIC -O2 -isystem /root/anaconda3/envs/dngaussian-2/include -fPIC -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/TH -I/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/THC -I/usr/local/cuda-11.8/include -I/root/anaconda3/envs/dngaussian-2/include/python3.9 -c -c /root/dngs-origin/shencoder/src/bindings.cpp -o /root/dngs-origin/shencoder/build/temp.linux-x86_64-cpython-39/root/dngs-origin/shencoder/src/bindings.o -O3 -std=c++14 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_shencoder -D_GLIBCXX_USE_CXX11_ABI=0
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:4:2: error: #error C++17 or later compatible compiler is required to use PyTorch.
+          4 | #error C++17 or later compatible compiler is required to use PyTorch.
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/string_view.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/StringUtil.h:6,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/Exception.h:5,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/core/Device.h:5,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/TensorBody.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/Tensor.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Tensor.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/function_hook.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/cpp_hook.h:2,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/variable.h:6,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/C++17.h:27:2: error: #error You need C++17 to compile PyTorch
+         27 | #error You need C++17 to compile PyTorch
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/ATen.h:4:2: error: #error C++17 or later compatible compiler is required to use ATen.
+          4 | #error C++17 or later compatible compiler is required to use ATen.
+            |  ^~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/typeid.h:17,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/core/ScalarTypeToTypeMeta.h:5,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/TensorBody.h:18,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/Tensor.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Tensor.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/function_hook.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/cpp_hook.h:2,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/variable.h:6,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/irange.h: In member function ‘bool c10::detail::integer_iterator<I, one_sided, <anonymous> >::operator==(const c10::detail::integer_iterator<I, one_sided, <anonymous> >&) const’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/c10/util/irange.h:50:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         50 |     if constexpr (one_sided) {
+            |        ^~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue.h:1499,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/List_inl.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/List.h:490,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/IListRef_inl.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/IListRef.h:632,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/WrapDimUtils.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/TensorNames.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/NamedTensorUtils.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/variable.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h: In lambda function:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:12: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |            ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:30: error: ‘is_convertible_v’ is not a member of ‘std’; did you mean ‘is_convertible’?
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |                              ^~~~~~~~~~~~~~~~
+            |                              is_convertible
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:91: error: expected ‘(’ before ‘,’ token
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |                                                                                           ^
+            |                                                                                           (
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:111: error: expected primary-expression before ‘>’ token
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |                                                                                                               ^
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1061:112: error: expected primary-expression before ‘)’ token
+       1061 |         if constexpr (::std::is_convertible_v<typename c10::invoke_result_t<T &&, Future&>, IValueWithStorages>) {
+            |                                                                                                                ^
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/ivalue_inl.h:1062:16: warning: structured bindings only available with ‘-std=c++17’ or ‘-std=gnu++17’
+       1062 |           auto [ivalue, storages] = cb(parentFut);
+            |                ^
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction_impl.h:1,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction.h:251,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/op_registration/op_registration.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/library.h:68,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd_not_implemented_fallback.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h: In static member function ‘static Result c10::impl::BoxedKernelWrapper<Result(Args ...), typename std::enable_if<((c10::guts::conjunction<c10::impl::can_box<Args>...>::value && c10::guts::conjunction<c10::guts::disjunction<c10::impl::has_ivalue_to<T, void>, std::is_same<void, ReturnType> >, c10::guts::negation<std::is_lvalue_reference<_Tp> > >::value) && (! c10::impl::is_tuple_of_mutable_tensor_refs<Result>::value)), void>::type>::call(const c10::BoxedKernel&, const c10::OperatorHandle&, c10::DispatchKeySet, Args ...)’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:25: error: ‘is_same_v’ is not a member of ‘std’; did you mean ‘is_same’?
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |                         ^~~~~~~~~
+            |                         is_same
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:35: error: expected primary-expression before ‘void’
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |                                   ^~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:34: warning: logical not is only applied to the left hand side of comparison [-Wlogical-not-parentheses]
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |                                  ^
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/boxing.h:229:35: error: expected ‘)’ before ‘void’
+        229 |     if constexpr (!std::is_same_v<void, Result>) {
+            |                  ~                ^~~~
+            |                                   )
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction_impl.h:2,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction.h:251,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/op_registration/op_registration.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/library.h:68,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd_not_implemented_fallback.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h: In constructor ‘c10::impl::assert_is_valid_input_type<T, AllowDeprecatedTypes, Enable>::assert_is_valid_input_type()’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h:109:10: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        109 |       if constexpr (guts::typelist::contains<supported_primitive_arg_types, T>::value) {
+            |          ^~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction_impl.h:2,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/KernelFunction.h:251,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/op_registration/op_registration.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/library.h:68,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/autograd/autograd_not_implemented_fallback.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:7,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h: In constructor ‘c10::impl::assert_is_valid_output_type<T, AllowDeprecatedTypes, Enable>::assert_is_valid_output_type()’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h:215:10: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        215 |       if constexpr(guts::typelist::contains<supported_primitive_arg_types, T>::value) {
+            |          ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h: In static member function ‘static void c10::impl::make_boxed_from_unboxed_functor<KernelFunctor, AllowDeprecatedTypes>::call(c10::OperatorKernel*, const c10::OperatorHandle&, c10::DispatchKeySet, c10::Stack*)’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/boxing/impl/make_boxed_from_unboxed_functor.h:575:10: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        575 |       if constexpr (has_outputs) {
+            |          ^~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/ATen.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h: In lambda function:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:391:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        391 |   AT_DISPATCH_CASE(at::ScalarType::Byte, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:392:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        392 |   AT_DISPATCH_CASE(at::ScalarType::Char, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:393:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        393 |   AT_DISPATCH_CASE(at::ScalarType::Int, __VA_ARGS__)  \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:394:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        394 |   AT_DISPATCH_CASE(at::ScalarType::Long, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:395:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        395 |   AT_DISPATCH_CASE(at::ScalarType::Short, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:233:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        233 |   AT_DISPATCH_CASE(at::ScalarType::Double, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:412:3: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        412 |   AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:234:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        234 |   AT_DISPATCH_CASE(at::ScalarType::Float, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:412:3: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        412 |   AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:515:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        515 |   AT_DISPATCH_CASE(SCALARTYPE1, __VA_ARGS__)    \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:516:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        516 |   AT_DISPATCH_CASE(SCALARTYPE2, __VA_ARGS__)    \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:517:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        517 |   AT_DISPATCH_CASE(SCALARTYPE3, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:287:7: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        287 |       AT_DISPATCH_ALL_TYPES_AND3(
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h: In lambda function:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:391:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        391 |   AT_DISPATCH_CASE(at::ScalarType::Byte, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:392:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        392 |   AT_DISPATCH_CASE(at::ScalarType::Char, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:393:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        393 |   AT_DISPATCH_CASE(at::ScalarType::Int, __VA_ARGS__)  \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:394:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        394 |   AT_DISPATCH_CASE(at::ScalarType::Long, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:395:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        395 |   AT_DISPATCH_CASE(at::ScalarType::Short, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:411:3: note: in expansion of macro ‘AT_DISPATCH_CASE_INTEGRAL_TYPES’
+        411 |   AT_DISPATCH_CASE_INTEGRAL_TYPES(__VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:233:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        233 |   AT_DISPATCH_CASE(at::ScalarType::Double, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:412:3: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        412 |   AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:234:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        234 |   AT_DISPATCH_CASE(at::ScalarType::Float, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:412:3: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        412 |   AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:514:3: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES’
+        514 |   AT_DISPATCH_CASE_ALL_TYPES(__VA_ARGS__)       \
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:515:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        515 |   AT_DISPATCH_CASE(SCALARTYPE1, __VA_ARGS__)    \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:516:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        516 |   AT_DISPATCH_CASE(SCALARTYPE2, __VA_ARGS__)    \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:517:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        517 |   AT_DISPATCH_CASE(SCALARTYPE3, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:524:7: note: in expansion of macro ‘AT_DISPATCH_CASE_ALL_TYPES_AND3’
+        524 |       AT_DISPATCH_CASE_ALL_TYPES_AND3(                      \
+            |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/detail/TensorDataContainer.h:307:9: note: in expansion of macro ‘AT_DISPATCH_ALL_TYPES_AND3’
+        307 |         AT_DISPATCH_ALL_TYPES_AND3(
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:12,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/dispatch/Dispatcher.h: In static member function ‘static Return c10::Dispatcher::callWithDispatchKeySlowPath(const c10::TypedOperatorHandle<Return(Args ...)>&, at::StepCallbacks&, c10::DispatchKeySet, const c10::KernelFunction&, Args ...)’:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/core/dispatch/Dispatcher.h:597:6: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+        597 |   if constexpr (num_boxed_args != 0) {
+            |      ^~~~~~~~~
+      In file included from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/ATen.h:11,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/types.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader_options.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/base.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader/stateful.h:4,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data/dataloader.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/data.h:3,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/all.h:9,
+                       from /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/extension.h:5,
+                       from /root/dngs-origin/shencoder/src/bindings.cpp:1:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/nn/functional/activation.h: In lambda function:
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:233:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        233 |   AT_DISPATCH_CASE(at::ScalarType::Double, __VA_ARGS__) \
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:237:34: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        237 |   AT_DISPATCH_SWITCH(TYPE, NAME, AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__))
+            |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/nn/functional/activation.h:895:27: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES’
+        895 |     attn_output_weights = AT_DISPATCH_FLOATING_TYPES(
+            |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:56:8: warning: ‘if constexpr’ only available with ‘-std=c++17’ or ‘-std=gnu++17’
+         56 |     if constexpr (!at::should_include_kernel_dtype(   \
+            |        ^~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:221:7: note: in definition of macro ‘AT_DISPATCH_SWITCH’
+        221 |       __VA_ARGS__                                                           \
+            |       ^~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:68:5: note: in expansion of macro ‘AT_PRIVATE_CHECK_SELECTIVE_BUILD’
+         68 |     AT_PRIVATE_CHECK_SELECTIVE_BUILD(enum_type);                        \
+            |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:74:3: note: in expansion of macro ‘AT_PRIVATE_CASE_TYPE_USING_HINT’
+         74 |   AT_PRIVATE_CASE_TYPE_USING_HINT(enum_type, scalar_t, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:234:3: note: in expansion of macro ‘AT_DISPATCH_CASE’
+        234 |   AT_DISPATCH_CASE(at::ScalarType::Float, __VA_ARGS__)
+            |   ^~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/ATen/Dispatch.h:237:34: note: in expansion of macro ‘AT_DISPATCH_CASE_FLOATING_TYPES’
+        237 |   AT_DISPATCH_SWITCH(TYPE, NAME, AT_DISPATCH_CASE_FLOATING_TYPES(__VA_ARGS__))
+            |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/include/torch/csrc/api/include/torch/nn/functional/activation.h:895:27: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES’
+        895 |     attn_output_weights = AT_DISPATCH_FLOATING_TYPES(
+            |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      ninja: build stopped: subcommand failed.
+      Traceback (most recent call last):
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 2100, in _run_ninja_build
+          subprocess.run(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/subprocess.py", line 528, in run
+          raise CalledProcessError(retcode, process.args,
+      subprocess.CalledProcessError: Command '['ninja', '-v']' returned non-zero exit status 1.
+      
+      The above exception was the direct cause of the following exception:
+      
+      Traceback (most recent call last):
+        File "<string>", line 2, in <module>
+        File "<pip-setuptools-caller>", line 35, in <module>
+        File "/root/dngs-origin/shencoder/setup.py", line 32, in <module>
+          setup(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/__init__.py", line 115, in setup
+          return distutils.core.setup(**attrs)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/core.py", line 186, in setup
+          return run_commands(dist)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/core.py", line 202, in run_commands
+          dist.run_commands()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/dist.py", line 1002, in run_commands
+          self.run_command(cmd)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/command/bdist_wheel.py", line 370, in run
+          self.run_command("build")
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/cmd.py", line 357, in run_command
+          self.distribution.run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build.py", line 135, in run
+          self.run_command(cmd_name)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/cmd.py", line 357, in run_command
+          self.distribution.run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/command/build_ext.py", line 96, in run
+          _build_ext.run(self)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build_ext.py", line 368, in run
+          self.build_extensions()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 873, in build_extensions
+          build_ext.build_extensions(self)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build_ext.py", line 484, in build_extensions
+          self._build_extensions_serial()
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build_ext.py", line 510, in _build_extensions_serial
+          self.build_extension(ext)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/command/build_ext.py", line 261, in build_extension
+          _build_ext.build_extension(self, ext)
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/setuptools/_distutils/command/build_ext.py", line 565, in build_extension
+          objects = self.compiler.compile(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 686, in unix_wrap_ninja_compile
+          _write_ninja_file_and_compile_objects(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 1774, in _write_ninja_file_and_compile_objects
+          _run_ninja_build(
+        File "/root/anaconda3/envs/dngaussian-2/lib/python3.9/site-packages/torch/utils/cpp_extension.py", line 2116, in _run_ninja_build
+          raise RuntimeError(message) from e
+      RuntimeError: Error compiling objects for extension
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for shencoder
+  Running setup.py clean for shencoder
+Failed to build gridencoder shencoder
+error: failed-wheel-build-for-install
+
+× Failed to build installable wheels for some pyproject.toml based projects
+╰─> gridencoder, shencoder
