@@ -159,7 +159,7 @@ def storePly(path, xyz, rgb):
     ply_data = PlyData([vertex_element])
     ply_data.write(path)
 
-def readColmapSceneInfo(path, images, dataset, eval, rand_pcd, mvs_pcd, llffhold=8, N_sparse=-1):
+def readColmapSceneInfo(path, images, dataset, eval, rand_pcd, mvs_pcd, llffhold=8, N_sparse=-1, fuse_pcd=False):
     try:
         cameras_extrinsic_file = os.path.join(path, "sparse/0", "images.bin")
         cameras_intrinsic_file = os.path.join(path, "sparse/0", "cameras.bin")
@@ -228,52 +228,72 @@ def readColmapSceneInfo(path, images, dataset, eval, rand_pcd, mvs_pcd, llffhold
         print("[warning] Both --rand_pcd and --mvs_pcd are detected, use --mvs_pcd.")
         rand_pcd = False
 
-    if rand_pcd:
-        print('Init random point cloud.')
-        ply_path = os.path.join(path, "sparse/0/points3D_random.ply")
-        bin_path = os.path.join(path, "sparse/0/points3D.bin")
-        txt_path = os.path.join(path, "sparse/0/points3D.txt")
-
-        try:
-            xyz, rgb, _ = read_points3D_binary(bin_path)
-        except:
-            xyz, rgb, _ = read_points3D_text(txt_path)
-        print(xyz.max(0), xyz.min(0))
-
-
-        if dataset == "LLFF":
-            pcd_shape = (topk_(xyz, 1, 0)[-1] + topk_(-xyz, 1, 0)[-1])
-            num_pts = int(pcd_shape.max() * 50)
-            xyz = np.random.random((num_pts, 3)) * pcd_shape * 1.3 - topk_(-xyz, 20, 0)[-1]
-        elif dataset == "DTU":
-            pcd_shape = (topk_(xyz, 100, 0)[-1] + topk_(-xyz, 100, 0)[-1])
-            num_pts = 10_00
-            xyz = np.random.random((num_pts, 3)) * pcd_shape * 1.3 - topk_(-xyz, 100, 0)[-1] # - 0.15 * pcd_shape
-        print(pcd_shape)
-        print(f"Generating random point cloud ({num_pts})...")
-
-        shs = np.random.random((num_pts, 3)) / 255.0
-        pcd = BasicPointCloud(points=xyz, colors=SH2RGB(shs), normals=np.zeros((num_pts, 3)))
-        storePly(ply_path, xyz, SH2RGB(shs) * 255)
-    elif mvs_pcd:
-        ply_path = os.path.join(path, "3_views/dense/fused.ply")
-        assert os.path.exists(ply_path)
-        pcd = fetchPly(ply_path)
-    else:
-        ply_path = os.path.join(path, "sparse/0/points3D.ply")
-        bin_path = os.path.join(path, "sparse/0/points3D.bin")
-        txt_path = os.path.join(path, "sparse/0/points3D.txt")
+    if fuse_pcd:
+        print('Init fused point cloud.')
+        ply_path = os.path.join(path, "points3D_fused.ply")
         if not os.path.exists(ply_path):
-            print("Converting point3d.bin to .ply, will happen only the first time you open the scene.")
+            print(f"Fused PLY not found at {ply_path}. Generating...")
+            # We call the script logic here or assume it's already generated.
+            # For simplicity, we can try to run the script if it exists.
+            import subprocess
+            cmd = ["python", "generate_fused_pcd.py", "-s", path, "-i", reading_dir]
+            if N_sparse > 0:
+                cmd += ["--n_sparse", str(N_sparse)]
+            subprocess.run(cmd, check=True)
+        
+        if os.path.exists(ply_path):
+            pcd = fetchPly(ply_path)
+        else:
+            print(f"Failed to generate/find {ply_path}, falling back to sparse PCD.")
+            fuse_pcd = False # Fallback
+
+    if not fuse_pcd:
+        if rand_pcd:
+            print('Init random point cloud.')
+            ply_path = os.path.join(path, "sparse/0/points3D_random.ply")
+            bin_path = os.path.join(path, "sparse/0/points3D.bin")
+            txt_path = os.path.join(path, "sparse/0/points3D.txt")
+
             try:
                 xyz, rgb, _ = read_points3D_binary(bin_path)
             except:
                 xyz, rgb, _ = read_points3D_text(txt_path)
-            storePly(ply_path, xyz, rgb)
-        try:
+            print(xyz.max(0), xyz.min(0))
+
+
+            if dataset == "LLFF":
+                pcd_shape = (topk_(xyz, 1, 0)[-1] + topk_(-xyz, 1, 0)[-1])
+                num_pts = int(pcd_shape.max() * 50)
+                xyz = np.random.random((num_pts, 3)) * pcd_shape * 1.3 - topk_(-xyz, 20, 0)[-1]
+            elif dataset == "DTU":
+                pcd_shape = (topk_(xyz, 100, 0)[-1] + topk_(-xyz, 100, 0)[-1])
+                num_pts = 10_00
+                xyz = np.random.random((num_pts, 3)) * pcd_shape * 1.3 - topk_(-xyz, 100, 0)[-1] # - 0.15 * pcd_shape
+            print(pcd_shape)
+            print(f"Generating random point cloud ({num_pts})...")
+
+            shs = np.random.random((num_pts, 3)) / 255.0
+            pcd = BasicPointCloud(points=xyz, colors=SH2RGB(shs), normals=np.zeros((num_pts, 3)))
+            storePly(ply_path, xyz, SH2RGB(shs) * 255)
+        elif mvs_pcd:
+            ply_path = os.path.join(path, "3_views/dense/fused.ply")
+            assert os.path.exists(ply_path)
             pcd = fetchPly(ply_path)
-        except:
-            pcd = None
+        else:
+            ply_path = os.path.join(path, "sparse/0/points3D.ply")
+            bin_path = os.path.join(path, "sparse/0/points3D.bin")
+            txt_path = os.path.join(path, "sparse/0/points3D.txt")
+            if not os.path.exists(ply_path):
+                print("Converting point3d.bin to .ply, will happen only the first time you open the scene.")
+                try:
+                    xyz, rgb, _ = read_points3D_binary(bin_path)
+                except:
+                    xyz, rgb, _ = read_points3D_text(txt_path)
+                storePly(ply_path, xyz, rgb)
+            try:
+                pcd = fetchPly(ply_path)
+            except:
+                pcd = None
 
     scene_info = SceneInfo(point_cloud=pcd,
                            train_cameras=train_cam_infos,

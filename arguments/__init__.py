@@ -57,6 +57,7 @@ class ModelParams(ParamGroup):
         self.eval = False
         self.rand_pcd = False
         self.mvs_pcd = False
+        self.fuse_pcd = False
         self.n_sparse = -1
         super().__init__(parser, "Loading Parameters", sentinel)
 
