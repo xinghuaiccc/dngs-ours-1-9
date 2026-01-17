@@ -134,8 +134,8 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     first_iter += 1
 
     patch_range = (5, 17) # LLFF
-    fft_weight = 0.01
-    lambda_entropy = 0.001
+    fft_weight = 0.05
+    lambda_entropy = 0.0001
 
     time_accum = 0
 
@@ -237,7 +237,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
             (1.0 - opt.lambda_dssim) * Ll1
             + opt.lambda_dssim * d_ssim
             + fft_weight * loss_fft
-            + lambda_entropy * loss_entropy
+            # + lambda_entropy * loss_entropy
         )
 
 
@@ -245,9 +245,9 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         loss_reg = torch.tensor(0., device=loss.device)
         shape_pena = (gaussians.get_scaling.max(dim=1).values / gaussians.get_scaling.min(dim=1).values).mean()
         scale_pena = ((gaussians.get_scaling.max(dim=1, keepdim=True).values)**2).mean()
-        opa_pena = 1 - (opacity[opacity > 0.2]**2).mean() + ((1 - opacity[opacity < 0.2])**2).mean()
+        # opa_pena = 1 - (opacity[opacity > 0.2]**2).mean() + ((1 - opacity[opacity < 0.2])**2).mean()
 
-        loss_reg += opt.shape_pena*shape_pena + opt.scale_pena*scale_pena + opt.opa_pena*opa_pena
+        loss_reg += opt.shape_pena*shape_pena + opt.scale_pena*scale_pena # + opt.opa_pena*opa_pena
         loss += loss_reg
 
         loss.backward()
@@ -270,7 +270,9 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
             clean_iterations = testing_iterations + [first_iter]
             clean_views(iteration, clean_iterations, scene, gaussians, pipe, background)
             time_accum += iter_start.elapsed_time(iter_end)
-            training_report(tb_writer, iteration, Ll1, loss, l1_loss, iter_start.elapsed_time(iter_end), testing_iterations, scene, render, (pipe, background))
+            if iteration % 100 == 0 or iteration in testing_iterations:
+                training_report(tb_writer, iteration, Ll1, loss, l1_loss, iter_start.elapsed_time(iter_end), testing_iterations, scene, render, (pipe, background))
+            
             if (iteration in saving_iterations):
                 print("\n[ITER {}] Saving Gaussians".format(iteration))
                 scene.save(iteration, render(viewpoint_cam, gaussians, pipe, background)["color"])

@@ -53,8 +53,8 @@ def evaluate(model_paths):
         per_view_dict_polytopeonly[scene_dir] = {}
 
         # for acc..
-        test_dir = Path(scene_dir) / "eval"
-        eval_dir = Path(scene_dir) / "eval"
+        test_dir = Path(scene_dir) / "test"
+        eval_dir = Path(scene_dir) / "test"
         
         for test_dir in [eval_dir]:
             dataset = test_dir.stem

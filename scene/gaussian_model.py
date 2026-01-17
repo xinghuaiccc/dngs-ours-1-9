@@ -213,7 +213,8 @@ class GaussianModel:
 
         self.neural_renderer = GridRenderer(
                                     bound=((self._xyz.max(0).values-self._xyz.min(0).values).max())/2 * 1.2,
-                                    coord_center=self._xyz.mean(0)
+                                    coord_center=self._xyz.mean(0),
+                                    keep_sigma=True
                                 ).cuda()
 
     def training_setup(self, training_args):

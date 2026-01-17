@@ -80,8 +80,8 @@ class GridRenderer(nn.Module):
     def forward(self, x, d):
         # x: [N, 3], in [-bound, bound]
         # d: [N, 3], nomalized in [-1, 1]
-        enc_x = self.encode_x(x)
-        sigma_result = self.density(x, enc_x)
+        sigma_result = self.density(x)
+        
         sigma = sigma_result['sigma']
         color = self.color(sigma_result, d)
         return sigma, color
@@ -99,9 +99,6 @@ class GridRenderer(nn.Module):
 
     def density(self, x, enc_x=None):
         # x: [N, 3], in [-bound, bound]
-        if self.keep_sigma and self.sigma_results_static is not None:
-            return self.sigma_results_static
-        
         if enc_x is None:
             enc_x = self.encode_x(x)
 
@@ -110,12 +107,6 @@ class GridRenderer(nn.Module):
         # sigma = torch.exp(h[..., 0])
         # sigma = torch.sigmoid(h[..., 0])
         geo_feat = h[..., 1:]
-
-        if self.keep_sigma:
-            self.sigma_results_static = {
-                    'sigma': sigma,
-                    'geo_feat': geo_feat,
-                }
 
         return {
             'sigma': sigma,
