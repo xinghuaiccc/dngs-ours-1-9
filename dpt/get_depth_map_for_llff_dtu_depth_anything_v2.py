@@ -34,11 +34,16 @@ def ensure_dir(path):
 
 def preprocess_image(image, image_processor):
     try:
-        inputs = image_processor(images=image, return_tensors="pt", do_resize=False)
+        # Let the processor handle resizing to the model's expected resolution to avoid huge token counts.
+        inputs = image_processor(images=image, return_tensors="pt")
         return inputs["pixel_values"]
     except Exception:
         mean = getattr(image_processor, "image_mean", [0.485, 0.456, 0.406])
         std = getattr(image_processor, "image_std", [0.229, 0.224, 0.225])
+        # Fallback path: manually normalize; still resize down to keep memory in check.
+        target_size = getattr(image_processor, "size", {"shortest_edge": 518}).get("shortest_edge", 518)
+        image = image.copy()
+        image.thumbnail((target_size, target_size))
         image_np = np.array(image).astype(np.float32) / 255.0
         image_np = (image_np - mean) / std
         image_t = torch.from_numpy(image_np).permute(2, 0, 1).unsqueeze(0)
@@ -47,8 +52,9 @@ def preprocess_image(image, image_processor):
 
 def run_depth_anything_v2(root_path, model_id):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch_dtype = torch.float16 if device.type == "cuda" else torch.float32
     image_processor = AutoImageProcessor.from_pretrained(model_id)
-    model = AutoModelForDepthEstimation.from_pretrained(model_id).to(device)
+    model = AutoModelForDepthEstimation.from_pretrained(model_id, torch_dtype=torch_dtype).to(device)
     model.eval()
 
     for scene_path in iter_llff_scenes(root_path):
@@ -65,7 +71,7 @@ def run_depth_anything_v2(root_path, model_id):
             image = Image.open(image_path).convert("RGB")
             width, height = image.size
 
-            pixel_values = preprocess_image(image, image_processor).to(device)
+            pixel_values = preprocess_image(image, image_processor).to(device=device, dtype=torch_dtype)
 
             with torch.no_grad():
                 outputs = model(pixel_values)

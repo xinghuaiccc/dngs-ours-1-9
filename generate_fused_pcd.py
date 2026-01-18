@@ -21,7 +21,7 @@ parser.add_argument(
     help="Distance threshold to keep point (bigger = filter more)",
 )
 parser.add_argument("--stride", default=4, type=int, help="Downsample stride (4 means 1/16 pixels)")
-parser.add_argument("--max_points_per_view", default=100000, type=int, help="Max points to add per view")
+parser.add_argument("--max_points_per_view", default=50000, type=int, help="Max points to add per view")
 parser.add_argument("--n_sparse", default=0, type=int, help="Use the same N sparse views as training")
 parser.add_argument("--photo_thresh", default=0.1, type=float, help="Photometric error threshold")
 args = parser.parse_args()

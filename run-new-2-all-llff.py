@@ -5,7 +5,8 @@ import time
 
 # ==================== Config ====================
 DATA_ROOT = "/root/all-data/nerf_llff_data"
-OUTPUT_ROOT = "output/nerf_llff_data"
+OUTPUT_ROOT = "output-new-2-new/nerf_llff_data"
+ITERATION = "15000"
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -27,13 +28,15 @@ COMMON_TRAIN_ARGS = [
     "--n_sparse",
     "3",
     "--iterations",
-    "7000",
+    ITERATION,
     "--position_lr_init",
-    "0.00016",
+    # "0.00016",
+    "0.0009",
     "--position_lr_final",
     "0.0000016",
     "--position_lr_max_steps",
-    "7000",
+    # "7000",
+    "15000",
     "--densify_until_iter",
     "4000",
     "--densify_grad_threshold",
@@ -41,17 +44,17 @@ COMMON_TRAIN_ARGS = [
     "--lambda_dssim",
     "0.2",
     "--hard_depth_start",
-    "8000",
+    "31000",
     "--soft_depth_start",
-    "8000",
+    "31000",
     "--near",
-    "0.1",
+    "10",
     "--prune_threshold",
     "0.01",
     "--percent_dense",
     "0.01",
     "--opacity_reset_interval",
-    "30000",
+    "31000",
 ]
 
 # ===============================================
@@ -75,15 +78,6 @@ def run_all():
         print(f"▶️  Scene: {scene}")
         print("==================================================")
 
-        gen_cmd = [
-            python_exe,
-            "generate_fused_pcd.py",
-            "-s",
-            scene_path,
-            "--n_sparse",
-            "3",
-        ]
-
         train_cmd = [
             python_exe,
             "train_llff_new-2.py",
@@ -92,10 +86,32 @@ def run_all():
             "--model_path",
             output_path,
         ] + COMMON_TRAIN_ARGS
+        render_cmd = [
+            python_exe,
+            "render.py",
+            "-s",
+            scene_path,
+            "--model_path",
+            output_path,
+            "-r",
+            "8",
+            "--iteration",
+            ITERATION,
+            "--near",
+            "10",
+            "--skip_train",
+        ]
+        metrics_cmd = [
+            python_exe,
+            "metrics.py",
+            "-m",
+            output_path,
+        ]
 
         try:
-            subprocess.run(gen_cmd, check=True)
             subprocess.run(train_cmd, check=True)
+            subprocess.run(render_cmd, check=True)
+            subprocess.run(metrics_cmd, check=True)
             print(f"\n✅ Scene {scene} done.\n")
         except subprocess.CalledProcessError as e:
             print(f"\n❌ Scene {scene} failed! Exit code: {e.returncode}")
