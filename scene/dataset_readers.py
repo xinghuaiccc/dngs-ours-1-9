@@ -228,7 +228,13 @@ def readColmapSceneInfo(path, images, dataset, eval, rand_pcd, mvs_pcd, llffhold
         print("[warning] Both --rand_pcd and --mvs_pcd are detected, use --mvs_pcd.")
         rand_pcd = False
 
-    if rand_pcd:
+    if mvs_pcd:
+        # Use fused point cloud from 3 views as initialized points.
+        ply_path = os.path.join(path, "3_views/dense/fused.ply")
+        print(f"Init MVS point cloud from: {ply_path}")
+        assert os.path.exists(ply_path)
+        pcd = fetchPly(ply_path)
+    elif rand_pcd:
         print('Init random point cloud.')
         ply_path = os.path.join(path, "sparse/0/points3D_random.ply")
         bin_path = os.path.join(path, "sparse/0/points3D.bin")
@@ -255,10 +261,6 @@ def readColmapSceneInfo(path, images, dataset, eval, rand_pcd, mvs_pcd, llffhold
         shs = np.random.random((num_pts, 3)) / 255.0
         pcd = BasicPointCloud(points=xyz, colors=SH2RGB(shs), normals=np.zeros((num_pts, 3)))
         storePly(ply_path, xyz, SH2RGB(shs) * 255)
-    elif mvs_pcd:
-        ply_path = os.path.join(path, "3_views/dense/fused.ply")
-        assert os.path.exists(ply_path)
-        pcd = fetchPly(ply_path)
     else:
         fused_ply_path = os.path.join(path, "points3D_fused.ply")
         if os.path.exists(fused_ply_path):
