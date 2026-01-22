@@ -134,7 +134,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     first_iter += 1
 
     patch_range = (5, 17) # LLFF
-    fft_weight = 0.05
+    fft_weight = opt.lambda_fft
     lambda_entropy = 0.0001
 
     time_accum = 0
