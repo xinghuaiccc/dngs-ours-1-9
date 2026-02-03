@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WinMerge File Compare Report</title>
+<style>
+<!--
+table { table-layout: fixed; margin: 0; border: 1px solid #a0a0a0; box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15); }
+th { position: sticky; top: 0; }
+td,th { word-break: break-all; font-size: 10pt; padding: 0 3px; }
+tr { vertical-align: top; }
+.title { font-weight: bold; color: white; background-color: blue; vertical-align: top; text-align: center; padding: 4px 4px; background: linear-gradient(mediumblue, darkblue);}
+.sf3b2 {color: #000000; background-color: #ffffff; }
+.sf3b5 {color: #000000; background-color: #0078d7; }
+.sf3b14 {color: #000000; background-color: #ffa0a0; }
+.sf3b16 {color: #000000; background-color: #f1e2ad; }
+.sf3b18 {color: #000000; background-color: #ffaa82; }
+.sf3b19 {color: #000000; background-color: #c8816c; }
+.sf6b2 {color: #ffffff; background-color: #ffffff; }
+.sf6b5 {color: #ffffff; background-color: #0078d7; }
+.sf6b14 {color: #ffffff; background-color: #ffa0a0; }
+.sf6b16 {color: #ffffff; background-color: #f1e2ad; }
+.sf6b18 {color: #ffffff; background-color: #ffaa82; }
+.sf6b19 {color: #ffffff; background-color: #c8816c; }
+.sf7b2 {color: #0000ff; background-color: #ffffff; font-weight: bold; }
+.sf7b5 {color: #0000ff; background-color: #0078d7; font-weight: bold; }
+.sf7b14 {color: #0000ff; background-color: #ffa0a0; font-weight: bold; }
+.sf7b16 {color: #0000ff; background-color: #f1e2ad; font-weight: bold; }
+.sf7b18 {color: #0000ff; background-color: #ffaa82; font-weight: bold; }
+.sf7b19 {color: #0000ff; background-color: #c8816c; font-weight: bold; }
+.sf8b2 {color: #800080; background-color: #ffffff; }
+.sf8b5 {color: #800080; background-color: #0078d7; }
+.sf8b14 {color: #800080; background-color: #ffa0a0; }
+.sf8b16 {color: #800080; background-color: #f1e2ad; }
+.sf8b18 {color: #800080; background-color: #ffaa82; }
+.sf8b19 {color: #800080; background-color: #c8816c; }
+.sf9b2 {color: #008000; background-color: #ffffff; }
+.sf9b5 {color: #008000; background-color: #0078d7; }
+.sf9b14 {color: #008000; background-color: #ffa0a0; }
+.sf9b16 {color: #008000; background-color: #f1e2ad; }
+.sf9b18 {color: #008000; background-color: #ffaa82; }
+.sf9b19 {color: #008000; background-color: #c8816c; }
+.sf10b2 {color: #ff0000; background-color: #ffffff; }
+.sf10b5 {color: #ff0000; background-color: #0078d7; }
+.sf10b14 {color: #ff0000; background-color: #ffa0a0; }
+.sf10b16 {color: #ff0000; background-color: #f1e2ad; }
+.sf10b18 {color: #ff0000; background-color: #ffaa82; }
+.sf10b19 {color: #ff0000; background-color: #c8816c; }
+.sf11b2 {color: #606060; background-color: #ffffff; }
+.sf11b5 {color: #606060; background-color: #0078d7; }
+.sf11b14 {color: #606060; background-color: #ffa0a0; }
+.sf11b16 {color: #606060; background-color: #f1e2ad; }
+.sf11b18 {color: #606060; background-color: #ffaa82; }
+.sf11b19 {color: #606060; background-color: #c8816c; }
+.sf12b2 {color: #800000; background-color: #ffffff; }
+.sf12b5 {color: #800000; background-color: #0078d7; }
+.sf12b14 {color: #800000; background-color: #ffa0a0; }
+.sf12b16 {color: #800000; background-color: #f1e2ad; }
+.sf12b18 {color: #800000; background-color: #ffaa82; }
+.sf12b19 {color: #800000; background-color: #c8816c; }
+.sf13b2 {color: #0080c0; background-color: #ffffff; }
+.sf13b5 {color: #0080c0; background-color: #0078d7; }
+.sf13b14 {color: #0080c0; background-color: #ffa0a0; }
+.sf13b16 {color: #0080c0; background-color: #f1e2ad; }
+.sf13b18 {color: #0080c0; background-color: #ffaa82; }
+.sf13b19 {color: #0080c0; background-color: #c8816c; }
+.sf15b2 {color: #000000; background-color: #ffffff; }
+.sf15b5 {color: #000000; background-color: #0078d7; }
+.sf15b14 {color: #000000; background-color: #ffa0a0; }
+.sf15b16 {color: #000000; background-color: #f1e2ad; }
+.sf15b18 {color: #000000; background-color: #ffaa82; }
+.sf15b19 {color: #000000; background-color: #c8816c; }
+.sf17b2 {color: #000000; background-color: #ffffff; }
+.sf17b5 {color: #000000; background-color: #0078d7; }
+.sf17b14 {color: #000000; background-color: #ffa0a0; }
+.sf17b16 {color: #000000; background-color: #f1e2ad; }
+.sf17b18 {color: #000000; background-color: #ffaa82; }
+.sf17b19 {color: #000000; background-color: #c8816c; }
+.sf20b2 {color: #000080; background-color: #ffffff; }
+.sf20b5 {color: #000080; background-color: #0078d7; }
+.sf20b14 {color: #000080; background-color: #ffa0a0; }
+.sf20b16 {color: #000080; background-color: #f1e2ad; }
+.sf20b18 {color: #000080; background-color: #ffaa82; }
+.sf20b19 {color: #000080; background-color: #c8816c; }
+.sf21b2 {color: #0080c0; background-color: #ffffff; }
+.sf21b5 {color: #0080c0; background-color: #0078d7; }
+.sf21b14 {color: #0080c0; background-color: #ffa0a0; }
+.sf21b16 {color: #0080c0; background-color: #f1e2ad; }
+.sf21b18 {color: #0080c0; background-color: #ffaa82; }
+.sf21b19 {color: #0080c0; background-color: #c8816c; }
+.sf3b2i {color: #ababab; background-color: #ffffff; }
+.sf3b5i {color: #005190; background-color: #0078d7; }
+.sf3b14i {color: #ab6b6b; background-color: #ffa0a0; }
+.sf3b16i {color: #a19774; background-color: #f1e2ad; }
+.sf3b18i {color: #ab7257; background-color: #ffaa82; }
+.sf3b19i {color: #865749; background-color: #c8816c; }
+.sf6b2i {color: #ffffff; background-color: #ffffff; }
+.sf6b5i {color: #54a4e4; background-color: #0078d7; }
+.sf6b14i {color: #ffbfbf; background-color: #ffa0a0; }
+.sf6b16i {color: #f5ebc8; background-color: #f1e2ad; }
+.sf6b18i {color: #ffc6ab; background-color: #ffaa82; }
+.sf6b19i {color: #daaa9c; background-color: #c8816c; }
+.sf7b2i {color: #ababff; background-color: #ffffff; font-weight: bold; }
+.sf7b5i {color: #0051e4; background-color: #0078d7; font-weight: bold; }
+.sf7b14i {color: #ab6bbf; background-color: #ffa0a0; font-weight: bold; }
+.sf7b16i {color: #a197c8; background-color: #f1e2ad; font-weight: bold; }
+.sf7b18i {color: #ab72ab; background-color: #ffaa82; font-weight: bold; }
+.sf7b19i {color: #86579c; background-color: #c8816c; font-weight: bold; }
+.sf8b2i {color: #d5abd5; background-color: #ffffff; }
+.sf8b5i {color: #2a51bb; background-color: #0078d7; }
+.sf8b14i {color: #d56b96; background-color: #ffa0a0; }
+.sf8b16i {color: #cc979f; background-color: #f1e2ad; }
+.sf8b18i {color: #d57282; background-color: #ffaa82; }
+.sf8b19i {color: #b15772; background-color: #c8816c; }
+.sf9b2i {color: #abd5ab; background-color: #ffffff; }
+.sf9b5i {color: #007a90; background-color: #0078d7; }
+.sf9b14i {color: #ab966b; background-color: #ffa0a0; }
+.sf9b16i {color: #a1c274; background-color: #f1e2ad; }
+.sf9b18i {color: #ab9d57; background-color: #ffaa82; }
+.sf9b19i {color: #868149; background-color: #c8816c; }
+.sf10b2i {color: #ffabab; background-color: #ffffff; }
+.sf10b5i {color: #545190; background-color: #0078d7; }
+.sf10b14i {color: #ff6b6b; background-color: #ffa0a0; }
+.sf10b16i {color: #f59774; background-color: #f1e2ad; }
+.sf10b18i {color: #ff7257; background-color: #ffaa82; }
+.sf10b19i {color: #da5749; background-color: #c8816c; }
+.sf11b2i {color: #cbcbcb; background-color: #ffffff; }
+.sf11b5i {color: #1f71b0; background-color: #0078d7; }
+.sf11b14i {color: #cb8b8b; background-color: #ffa0a0; }
+.sf11b16i {color: #c1b794; background-color: #f1e2ad; }
+.sf11b18i {color: #cb9277; background-color: #ffaa82; }
+.sf11b19i {color: #a67769; background-color: #c8816c; }
+.sf12b2i {color: #d5abab; background-color: #ffffff; }
+.sf12b5i {color: #2a5190; background-color: #0078d7; }
+.sf12b14i {color: #d56b6b; background-color: #ffa0a0; }
+.sf12b16i {color: #cc9774; background-color: #f1e2ad; }
+.sf12b18i {color: #d57257; background-color: #ffaa82; }
+.sf12b19i {color: #b15749; background-color: #c8816c; }
+.sf13b2i {color: #abd5eb; background-color: #ffffff; }
+.sf13b5i {color: #007ad0; background-color: #0078d7; }
+.sf13b14i {color: #ab96aa; background-color: #ffa0a0; }
+.sf13b16i {color: #a1c2b3; background-color: #f1e2ad; }
+.sf13b18i {color: #ab9d96; background-color: #ffaa82; }
+.sf13b19i {color: #868187; background-color: #c8816c; }
+.sf15b2i {color: #ababab; background-color: #ffffff; }
+.sf15b5i {color: #005190; background-color: #0078d7; }
+.sf15b14i {color: #ab6b6b; background-color: #ffa0a0; }
+.sf15b16i {color: #a19774; background-color: #f1e2ad; }
+.sf15b18i {color: #ab7257; background-color: #ffaa82; }
+.sf15b19i {color: #865749; background-color: #c8816c; }
+.sf17b2i {color: #ababab; background-color: #ffffff; }
+.sf17b5i {color: #005190; background-color: #0078d7; }
+.sf17b14i {color: #ab6b6b; background-color: #ffa0a0; }
+.sf17b16i {color: #a19774; background-color: #f1e2ad; }
+.sf17b18i {color: #ab7257; background-color: #ffaa82; }
+.sf17b19i {color: #865749; background-color: #c8816c; }
+.sf20b2i {color: #ababd5; background-color: #ffffff; }
+.sf20b5i {color: #0051bb; background-color: #0078d7; }
+.sf20b14i {color: #ab6b96; background-color: #ffa0a0; }
+.sf20b16i {color: #a1979f; background-color: #f1e2ad; }
+.sf20b18i {color: #ab7282; background-color: #ffaa82; }
+.sf20b19i {color: #865772; background-color: #c8816c; }
+.sf21b2i {color: #abd5eb; background-color: #ffffff; }
+.sf21b5i {color: #007ad0; background-color: #0078d7; }
+.sf21b14i {color: #ab96aa; background-color: #ffa0a0; }
+.sf21b16i {color: #a1c2b3; background-color: #f1e2ad; }
+.sf21b18i {color: #ab9d96; background-color: #ffaa82; }
+.sf21b19i {color: #868187; background-color: #c8816c; }
+.cn {text-align: center; word-break: normal; color: #000000; background-color: #f0f0f0;}
+.ln {text-align: right; word-break: normal; color: #000000; background-color: #f0f0f0;}
+-->
+</style>
+</head>
+<body>
+<table style="width: 100%; border-collapse: collapse;">
+<colgroup>
+<col style="width: 0.5em;" />
+<col style="width: calc(100% / 2 - 0.5em);" />
+<col style="width: 0.5em;" />
+<col style="width: calc(100% / 2 - 0.5em);" />
+</colgroup>
+<thead>
+<tr>
+<th colspan="2" class="title">\\wsl.localhost\Ubuntu-20.04-C\root\DNGaussian\metrics.py</th>
+<th colspan="2" class="title">\\wsl.localhost\Ubuntu-20.04-C\root\ours-sprse\metrics.py</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2">#</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2">#</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># Copyright (C) 2023, Inria</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># Copyright (C) 2023, Inria</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># GRAPHDECO research group, https://team.inria.fr/graphdeco</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># GRAPHDECO research group, https://team.inria.fr/graphdeco</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># All rights reserved.</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># All rights reserved.</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2">#</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2">#</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># This software is free for non-commercial, research and evaluation use </span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># This software is free for non-commercial, research and evaluation use </span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># under the terms of the LICENSE.md file.</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># under the terms of the LICENSE.md file.</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2">#</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2">#</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># For inquiries contact &nbsp;george.drettakis@inria.fr</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2"># For inquiries contact &nbsp;george.drettakis@inria.fr</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2">#</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf9b2">#</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">pathlib</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">Path</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">pathlib</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">Path</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">os</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">os</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">PIL</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">Image</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">PIL</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">Image</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">torch</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">torch</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">torchvision</span><span class="sf11b2">.</span><span class="sf3b2">transforms</span><span class="sf11b2">.</span><span class="sf3b2">functional</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">as</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">tf</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">torchvision</span><span class="sf11b2">.</span><span class="sf3b2">transforms</span><span class="sf11b2">.</span><span class="sf3b2">functional</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">as</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">tf</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">utils</span><span class="sf11b2">.</span><span class="sf3b2">loss_utils</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">ssim</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">utils</span><span class="sf11b2">.</span><span class="sf3b2">loss_utils</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">ssim</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">skimage</span><span class="sf11b2">.</span><span class="sf3b2">metrics</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">structural_similarity</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">skimage</span><span class="sf11b2">.</span><span class="sf3b2">metrics</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">structural_similarity</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">lpipsPyTorch</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">lpips</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">lpipsPyTorch</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">lpips</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">json</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">json</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">tqdm</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">tqdm</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">tqdm</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">tqdm</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">utils</span><span class="sf11b2">.</span><span class="sf3b2">image_utils</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">psnr</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">utils</span><span class="sf11b2">.</span><span class="sf3b2">image_utils</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">psnr</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">argparse</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">ArgumentParser</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">from</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">argparse</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">import</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">ArgumentParser</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">def</span><span class="sf11b2">&nbsp;</span><span class="sf8b2">readImages</span><span class="sf11b2">(</span><span class="sf3b2">renders_dir</span><span class="sf11b2">, </span><span class="sf3b2">gt_dir</span><span class="sf11b2">):</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">def</span><span class="sf11b2">&nbsp;</span><span class="sf8b2">readImages</span><span class="sf11b2">(</span><span class="sf3b2">renders_dir</span><span class="sf11b2">, </span><span class="sf3b2">gt_dir</span><span class="sf11b2">):</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">renders</span><span class="sf11b2">&nbsp;= []</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">renders</span><span class="sf11b2">&nbsp;= []</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">gts</span><span class="sf11b2">&nbsp;= []</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">gts</span><span class="sf11b2">&nbsp;= []</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">image_names</span><span class="sf11b2">&nbsp;= []</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">image_names</span><span class="sf11b2">&nbsp;= []</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">fname</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">os</span><span class="sf11b2">.</span><span class="sf8b2">listdir</span><span class="sf11b2">(</span><span class="sf3b2">renders_dir</span><span class="sf11b2">):</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">fname</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">os</span><span class="sf11b2">.</span><span class="sf8b2">listdir</span><span class="sf11b2">(</span><span class="sf3b2">renders_dir</span><span class="sf11b2">):</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">render</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">Image</span><span class="sf11b2">.</span><span class="sf21b2">open</span><span class="sf11b2">(</span><span class="sf3b2">renders_dir</span><span class="sf11b2">&nbsp;/ </span><span class="sf3b2">fname</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">render</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">Image</span><span class="sf11b2">.</span><span class="sf21b2">open</span><span class="sf11b2">(</span><span class="sf3b2">renders_dir</span><span class="sf11b2">&nbsp;/ </span><span class="sf3b2">fname</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">gt</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">Image</span><span class="sf11b2">.</span><span class="sf21b2">open</span><span class="sf11b2">(</span><span class="sf3b2">gt_dir</span><span class="sf11b2">&nbsp;/ </span><span class="sf3b2">fname</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">gt</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">Image</span><span class="sf11b2">.</span><span class="sf21b2">open</span><span class="sf11b2">(</span><span class="sf3b2">gt_dir</span><span class="sf11b2">&nbsp;/ </span><span class="sf3b2">fname</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">renders</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf3b2">tf</span><span class="sf11b2">.</span><span class="sf8b2">to_tensor</span><span class="sf11b2">(</span><span class="sf3b2">render</span><span class="sf11b2">).</span><span class="sf8b2">uns<wbr>queeze</span><span class="sf11b2">(</span><span class="sf10b2">0</span><span class="sf11b2">)[:, :</span><span class="sf10b2">3</span><span class="sf11b2">, :, :].</span><span class="sf8b2">cuda</span><span class="sf11b2">())</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">renders</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf3b2">tf</span><span class="sf11b2">.</span><span class="sf8b2">to_tensor</span><span class="sf11b2">(</span><span class="sf3b2">render</span><span class="sf11b2">).</span><span class="sf8b2">uns<wbr>queeze</span><span class="sf11b2">(</span><span class="sf10b2">0</span><span class="sf11b2">)[:, :</span><span class="sf10b2">3</span><span class="sf11b2">, :, :].</span><span class="sf8b2">cuda</span><span class="sf11b2">())</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">gts</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf3b2">tf</span><span class="sf11b2">.</span><span class="sf8b2">to_tensor</span><span class="sf11b2">(</span><span class="sf3b2">gt</span><span class="sf11b2">).</span><span class="sf8b2">unsqueeze</span><span class="sf11b2">(</span><span class="sf10b2">0<wbr></span><span class="sf11b2">)[:, :</span><span class="sf10b2">3</span><span class="sf11b2">, :, :].</span><span class="sf8b2">cuda</span><span class="sf11b2">())</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">gts</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf3b2">tf</span><span class="sf11b2">.</span><span class="sf8b2">to_tensor</span><span class="sf11b2">(</span><span class="sf3b2">gt</span><span class="sf11b2">).</span><span class="sf8b2">unsqueeze</span><span class="sf11b2">(</span><span class="sf10b2">0<wbr></span><span class="sf11b2">)[:, :</span><span class="sf10b2">3</span><span class="sf11b2">, :, :].</span><span class="sf8b2">cuda</span><span class="sf11b2">())</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">image_names</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf3b2">fname</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">image_names</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf3b2">fname</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf7b2">return</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">renders</span><span class="sf11b2">, </span><span class="sf3b2">gts</span><span class="sf11b2">, </span><span class="sf3b2">image_names</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf7b2">return</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">renders</span><span class="sf11b2">, </span><span class="sf3b2">gts</span><span class="sf11b2">, </span><span class="sf3b2">image_names</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">def</span><span class="sf11b2">&nbsp;</span><span class="sf8b2">evaluate</span><span class="sf11b2">(</span><span class="sf3b2">model_paths</span><span class="sf11b2">):</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">def</span><span class="sf11b2">&nbsp;</span><span class="sf8b2">evaluate</span><span class="sf11b2">(</span><span class="sf3b2">model_paths</span><span class="sf11b2">):</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">full_dict</span><span class="sf11b2">&nbsp;= {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">full_dict</span><span class="sf11b2">&nbsp;= {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">per_view_dict</span><span class="sf11b2">&nbsp;= {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">per_view_dict</span><span class="sf11b2">&nbsp;= {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">full_dict_polytopeonly</span><span class="sf11b2">&nbsp;= {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">full_dict_polytopeonly</span><span class="sf11b2">&nbsp;= {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">per_view_dict_polytopeonly</span><span class="sf11b2">&nbsp;= {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">per_view_dict_polytopeonly</span><span class="sf11b2">&nbsp;= {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">""</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">""</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">scene_dir</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">model_paths</span><span class="sf11b2">:</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">scene_dir</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">model_paths</span><span class="sf11b2">:</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">"Scene:"</span><span class="sf11b2">, </span><span class="sf3b2">scene_dir</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">"Scene:"</span><span class="sf11b2">, </span><span class="sf3b2">scene_dir</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">] = {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">] = {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">] = {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">] = {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict_polytopeonly</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">] = {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict_polytopeonly</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">] = {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict_polytopeonly</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">] = {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict_polytopeonly</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">] = {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf9b2"># for acc..</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf9b2"># for acc..</span></code></td>
+</tr>
+<tr>
+<td class="ln"><a id="d1" href="#d1">.</a></td><td style="color: #000000; background-color: #efcb05; "><code><span style="color: #000000; background-color: #efcb05; ">&nbsp; &nbsp; &nbsp; &nbsp; </span><span style="color: #000000; background-color: #efcb05; ">test_dir</span><span style="color: #000000; background-color: #efcb05; ">&nbsp;= </span><span style="color: #000000; background-color: #efcb05; ">Path</span><span style="color: #000000; background-color: #efcb05; ">(</span><span style="color: #000000; background-color: #efcb05; ">scene_dir</span><span style="color: #000000; background-color: #efcb05; ">) / </span><span style="color: #000000; background-color: #efcb05; ">"</span><span class="sf17b16">eval</span><span style="color: #000000; background-color: #efcb05; ">"</span>&nbsp;</code></td>
+<td class="ln"></td><td style="color: #000000; background-color: #efcb05; "><code><span style="color: #000000; background-color: #efcb05; ">&nbsp; &nbsp; &nbsp; &nbsp; </span><span style="color: #000000; background-color: #efcb05; ">test_dir</span><span style="color: #000000; background-color: #efcb05; ">&nbsp;= </span><span style="color: #000000; background-color: #efcb05; ">Path</span><span style="color: #000000; background-color: #efcb05; ">(</span><span style="color: #000000; background-color: #efcb05; ">scene_dir</span><span style="color: #000000; background-color: #efcb05; ">) / </span><span style="color: #000000; background-color: #efcb05; ">"</span><span class="sf17b16">test</span><span style="color: #000000; background-color: #efcb05; ">"</span>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td style="color: #000000; background-color: #efcb05; "><code><span style="color: #000000; background-color: #efcb05; ">&nbsp; &nbsp; &nbsp; &nbsp; </span><span style="color: #000000; background-color: #efcb05; ">eval_dir</span><span style="color: #000000; background-color: #efcb05; ">&nbsp;= </span><span style="color: #000000; background-color: #efcb05; ">Path</span><span style="color: #000000; background-color: #efcb05; ">(</span><span style="color: #000000; background-color: #efcb05; ">scene_dir</span><span style="color: #000000; background-color: #efcb05; ">) / </span><span style="color: #000000; background-color: #efcb05; ">"</span><span class="sf17b16">eval</span><span style="color: #000000; background-color: #efcb05; ">"</span>&nbsp;</code></td>
+<td class="ln"></td><td style="color: #000000; background-color: #efcb05; "><code><span style="color: #000000; background-color: #efcb05; ">&nbsp; &nbsp; &nbsp; &nbsp; </span><span style="color: #000000; background-color: #efcb05; ">eval_dir</span><span style="color: #000000; background-color: #efcb05; ">&nbsp;= </span><span style="color: #000000; background-color: #efcb05; ">Path</span><span style="color: #000000; background-color: #efcb05; ">(</span><span style="color: #000000; background-color: #efcb05; ">scene_dir</span><span style="color: #000000; background-color: #efcb05; ">) / </span><span style="color: #000000; background-color: #efcb05; ">"</span><span class="sf17b16">test</span><span style="color: #000000; background-color: #efcb05; ">"</span>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">test_dir</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;[</span><span class="sf3b2">eval_dir</span><span class="sf11b2">]:</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">test_dir</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;[</span><span class="sf3b2">eval_dir</span><span class="sf11b2">]:</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">dataset</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">test_dir</span><span class="sf11b2">.</span><span class="sf3b2">stem</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">dataset</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">test_dir</span><span class="sf11b2">.</span><span class="sf3b2">stem</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">method</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">os</span><span class="sf11b2">.</span><span class="sf8b2">listdir</span><span class="sf11b2">(</span><span class="sf3b2">test_dir</span><span class="sf11b2">):</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">method</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">os</span><span class="sf11b2">.</span><span class="sf8b2">listdir</span><span class="sf11b2">(</span><span class="sf3b2">test_dir</span><span class="sf11b2">):</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">"Method:"</span><span class="sf11b2">, </span><span class="sf3b2">method</span><span class="sf11b2">, </span><span class="sf3b2">dataset</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">"Method:"</span><span class="sf11b2">, </span><span class="sf3b2">method</span><span class="sf11b2">, </span><span class="sf3b2">dataset</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">method</span><span class="sf11b2">] = {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">method</span><span class="sf11b2">] = {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">method</span><span class="sf11b2">] = {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">method</span><span class="sf11b2">] = {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict_polytopeonly</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">metho<wbr>d</span><span class="sf11b2">] = {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict_polytopeonly</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">metho<wbr>d</span><span class="sf11b2">] = {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict_polytopeonly</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">m<wbr>ethod</span><span class="sf11b2">] = {}</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict_polytopeonly</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">m<wbr>ethod</span><span class="sf11b2">] = {}</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">method_dir</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">test_dir</span><span class="sf11b2">&nbsp;/ </span><span class="sf3b2">method</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">method_dir</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">test_dir</span><span class="sf11b2">&nbsp;/ </span><span class="sf3b2">method</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">gt_dir</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">method_dir</span><span class="sf11b2">/ </span><span class="sf12b2">"gt"</span>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">gt_dir</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">method_dir</span><span class="sf11b2">/ </span><span class="sf12b2">"gt"</span>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">renders_dir</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">method_dir</span><span class="sf11b2">&nbsp;/ </span><span class="sf12b2">"renders"</span>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">renders_dir</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">method_dir</span><span class="sf11b2">&nbsp;/ </span><span class="sf12b2">"renders"</span>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">renders</span><span class="sf11b2">, </span><span class="sf3b2">gts</span><span class="sf11b2">, </span><span class="sf3b2">image_names</span><span class="sf11b2">&nbsp;= </span><span class="sf8b2">readImages</span><span class="sf11b2">(</span><span class="sf3b2">renders_dir</span><span class="sf11b2">, </span><span class="sf3b2">gt_dir</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">renders</span><span class="sf11b2">, </span><span class="sf3b2">gts</span><span class="sf11b2">, </span><span class="sf3b2">image_names</span><span class="sf11b2">&nbsp;= </span><span class="sf8b2">readImages</span><span class="sf11b2">(</span><span class="sf3b2">renders_dir</span><span class="sf11b2">, </span><span class="sf3b2">gt_dir</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">ssims</span><span class="sf11b2">&nbsp;= []</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">ssims</span><span class="sf11b2">&nbsp;= []</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">ssims_sk</span><span class="sf11b2">&nbsp;= []</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">ssims_sk</span><span class="sf11b2">&nbsp;= []</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">psnrs</span><span class="sf11b2">&nbsp;= []</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">psnrs</span><span class="sf11b2">&nbsp;= []</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">lpipss</span><span class="sf11b2">&nbsp;= []</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">lpipss</span><span class="sf11b2">&nbsp;= []</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">idx</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf8b2">tqdm</span><span class="sf11b2">(</span><span class="sf21b2">range</span><span class="sf11b2">(</span><span class="sf21b2">len</span><span class="sf11b2">(</span><span class="sf3b2">renders</span><span class="sf11b2">)), </span><span class="sf3b2">desc</span><span class="sf11b2">=</span><span class="sf12b2">"Metric evaluation progress"</span><span class="sf11b2">, </span><span class="sf21b2">ascii</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">, </span><span class="sf3b2">dynamic_ncols</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">):</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">idx</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf8b2">tqdm</span><span class="sf11b2">(</span><span class="sf21b2">range</span><span class="sf11b2">(</span><span class="sf21b2">len</span><span class="sf11b2">(</span><span class="sf3b2">renders</span><span class="sf11b2">)), </span><span class="sf3b2">desc</span><span class="sf11b2">=</span><span class="sf12b2">"Metric evaluation progress"</span><span class="sf11b2">, </span><span class="sf21b2">ascii</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">, </span><span class="sf3b2">dynamic_ncols</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">):</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">ssims</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf8b2">ssim</span><span class="sf11b2">(</span><span class="sf3b2">renders</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">], </span><span class="sf3b2">gts</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">]))</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">ssims</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf8b2">ssim</span><span class="sf11b2">(</span><span class="sf3b2">renders</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">], </span><span class="sf3b2">gts</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">]))</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">ssims_sk</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf8b2">structural_similarity</span><span class="sf11b2">(</span><span class="sf3b2">r<wbr>enders</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">][</span><span class="sf10b2">0</span><span class="sf11b2">].</span><span class="sf8b2">permute</span><span class="sf11b2">(</span><span class="sf10b2">1</span><span class="sf11b2">,</span><span class="sf10b2">2</span><span class="sf11b2">,</span><span class="sf10b2">0</span><span class="sf11b2">).</span><span class="sf8b2">cpu</span><span class="sf11b2">().</span><span class="sf8b2">num<wbr>py</span><span class="sf11b2">(), </span><span class="sf3b2">gts</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">][</span><span class="sf10b2">0</span><span class="sf11b2">].</span><span class="sf8b2">permute</span><span class="sf11b2">(</span><span class="sf10b2">1</span><span class="sf11b2">,</span><span class="sf10b2">2</span><span class="sf11b2">,</span><span class="sf10b2">0</span><span class="sf11b2">).</span><span class="sf8b2">cpu</span><span class="sf11b2">().</span><span class="sf8b2">numpy</span><span class="sf11b2">(<wbr>), </span><span class="sf3b2">multichannel</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">, </span><span class="sf3b2">channel_axis</span><span class="sf11b2">=</span><span class="sf10b2">2</span><span class="sf11b2">&nbsp;,</span><span class="sf3b2">data_range</span><span class="sf11b2">=</span><span class="sf10b2">1.0</span><span class="sf11b2">))</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">ssims_sk</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf8b2">structural_similarity</span><span class="sf11b2">(</span><span class="sf3b2">r<wbr>enders</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">][</span><span class="sf10b2">0</span><span class="sf11b2">].</span><span class="sf8b2">permute</span><span class="sf11b2">(</span><span class="sf10b2">1</span><span class="sf11b2">,</span><span class="sf10b2">2</span><span class="sf11b2">,</span><span class="sf10b2">0</span><span class="sf11b2">).</span><span class="sf8b2">cpu</span><span class="sf11b2">().</span><span class="sf8b2">num<wbr>py</span><span class="sf11b2">(), </span><span class="sf3b2">gts</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">][</span><span class="sf10b2">0</span><span class="sf11b2">].</span><span class="sf8b2">permute</span><span class="sf11b2">(</span><span class="sf10b2">1</span><span class="sf11b2">,</span><span class="sf10b2">2</span><span class="sf11b2">,</span><span class="sf10b2">0</span><span class="sf11b2">).</span><span class="sf8b2">cpu</span><span class="sf11b2">().</span><span class="sf8b2">numpy</span><span class="sf11b2">(<wbr>), </span><span class="sf3b2">multichannel</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">, </span><span class="sf3b2">channel_axis</span><span class="sf11b2">=</span><span class="sf10b2">2</span><span class="sf11b2">&nbsp;,</span><span class="sf3b2">data_range</span><span class="sf11b2">=</span><span class="sf10b2">1.0</span><span class="sf11b2">))</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">psnrs</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf8b2">psnr</span><span class="sf11b2">(</span><span class="sf3b2">renders</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">], </span><span class="sf3b2">gts</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">]))</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">psnrs</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf8b2">psnr</span><span class="sf11b2">(</span><span class="sf3b2">renders</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">], </span><span class="sf3b2">gts</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">]))</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf9b2"># Following previous works to keep the range of RGB in [0, 1]. &nbsp;(however, may be a mistake : https://github.com/richzhang/Perceptual<wbr>Similarity) </span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf9b2"># Following previous works to keep the range of RGB in [0, 1]. &nbsp;(however, may be a mistake : https://github.com/richzhang/Perceptual<wbr>Similarity) </span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">lpipss</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf8b2">lpips</span><span class="sf11b2">(</span><span class="sf3b2">renders</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">], </span><span class="sf3b2">gts</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">], </span><span class="sf3b2">net_type</span><span class="sf11b2">=</span><span class="sf12b2">'vgg'</span><span class="sf11b2">))</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">lpipss</span><span class="sf11b2">.</span><span class="sf8b2">append</span><span class="sf11b2">(</span><span class="sf8b2">lpips</span><span class="sf11b2">(</span><span class="sf3b2">renders</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">], </span><span class="sf3b2">gts</span><span class="sf11b2">[</span><span class="sf3b2">idx</span><span class="sf11b2">], </span><span class="sf3b2">net_type</span><span class="sf11b2">=</span><span class="sf12b2">'vgg'</span><span class="sf11b2">))</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">" &nbsp;SSIM : {:&gt;12.7f}"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims</span><span class="sf11b2">).</span><span class="sf8b2">m<wbr>ean</span><span class="sf11b2">(), </span><span class="sf12b2">".5"</span><span class="sf11b2">))</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">" &nbsp;SSIM : {:&gt;12.7f}"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims</span><span class="sf11b2">).</span><span class="sf8b2">m<wbr>ean</span><span class="sf11b2">(), </span><span class="sf12b2">".5"</span><span class="sf11b2">))</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">" &nbsp;SSIM_sk : {:&gt;12.7f}"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims_sk<wbr></span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">(), </span><span class="sf12b2">".5"</span><span class="sf11b2">))</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">" &nbsp;SSIM_sk : {:&gt;12.7f}"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims_sk<wbr></span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">(), </span><span class="sf12b2">".5"</span><span class="sf11b2">))</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">" &nbsp;PSNR : {:&gt;12.7f}"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">psnrs</span><span class="sf11b2">).</span><span class="sf8b2">m<wbr>ean</span><span class="sf11b2">(), </span><span class="sf12b2">".5"</span><span class="sf11b2">))</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">" &nbsp;PSNR : {:&gt;12.7f}"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">psnrs</span><span class="sf11b2">).</span><span class="sf8b2">m<wbr>ean</span><span class="sf11b2">(), </span><span class="sf12b2">".5"</span><span class="sf11b2">))</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">" &nbsp;LPIPS: {:&gt;12.7f}"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">lpipss</span><span class="sf11b2">).<wbr></span><span class="sf8b2">mean</span><span class="sf11b2">(), </span><span class="sf12b2">".5"</span><span class="sf11b2">))</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">" &nbsp;LPIPS: {:&gt;12.7f}"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">lpipss</span><span class="sf11b2">).<wbr></span><span class="sf8b2">mean</span><span class="sf11b2">(), </span><span class="sf12b2">".5"</span><span class="sf11b2">))</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">""</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf21b2">print</span><span class="sf11b2">(</span><span class="sf12b2">""</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">method</span><span class="sf11b2">].</span><span class="sf8b2">update</span><span class="sf11b2">({</span><span class="sf12b2">"S<wbr>SIM"</span><span class="sf11b2">: </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims</span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">().</span><span class="sf8b2">item</span><span class="sf11b2">(),</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">full_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">method</span><span class="sf11b2">].</span><span class="sf8b2">update</span><span class="sf11b2">({</span><span class="sf12b2">"S<wbr>SIM"</span><span class="sf11b2">: </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims</span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">().</span><span class="sf8b2">item</span><span class="sf11b2">(),</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"SSIM_sk"</span><span class="sf11b2">: </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims_sk</span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">().</span><span class="sf8b2">item</span><span class="sf11b2">(),</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"SSIM_sk"</span><span class="sf11b2">: </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims_sk</span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">().</span><span class="sf8b2">item</span><span class="sf11b2">(),</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"PSNR"</span><span class="sf11b2">: </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">psnrs</span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">().</span><span class="sf8b2">item</span><span class="sf11b2">(),</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"PSNR"</span><span class="sf11b2">: </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">psnrs</span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">().</span><span class="sf8b2">item</span><span class="sf11b2">(),</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"LPIPS"</span><span class="sf11b2">: </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">lpipss</span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">().</span><span class="sf8b2">item</span><span class="sf11b2">()})</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"LPIPS"</span><span class="sf11b2">: </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">lpipss</span><span class="sf11b2">).</span><span class="sf8b2">mean</span><span class="sf11b2">().</span><span class="sf8b2">item</span><span class="sf11b2">()})</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">method</span><span class="sf11b2">].</span><span class="sf8b2">update<wbr></span><span class="sf11b2">({</span><span class="sf12b2">"SSIM"</span><span class="sf11b2">: {</span><span class="sf3b2">name</span><span class="sf11b2">: </span><span class="sf3b2">ssim</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">ssim</span><span class="sf11b2">, </span><span class="sf3b2">name</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">zip</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims</span><span class="sf11b2">).</span><span class="sf8b2">tolist</span><span class="sf11b2">(), </span><span class="sf3b2">image_names</span><span class="sf11b2">)},</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">per_view_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">][</span><span class="sf3b2">method</span><span class="sf11b2">].</span><span class="sf8b2">update<wbr></span><span class="sf11b2">({</span><span class="sf12b2">"SSIM"</span><span class="sf11b2">: {</span><span class="sf3b2">name</span><span class="sf11b2">: </span><span class="sf3b2">ssim</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">ssim</span><span class="sf11b2">, </span><span class="sf3b2">name</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">zip</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">ssims</span><span class="sf11b2">).</span><span class="sf8b2">tolist</span><span class="sf11b2">(), </span><span class="sf3b2">image_names</span><span class="sf11b2">)},</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"PSNR"</span><span class="sf11b2">: {</span><span class="sf3b2">name</span><span class="sf11b2">: </span><span class="sf3b2">psnr</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">psnr</span><span class="sf11b2">, </span><span class="sf3b2">name</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">zip</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">psnrs</span><span class="sf11b2">).</span><span class="sf8b2">tolist</span><span class="sf11b2">(), </span><span class="sf3b2">image_names</span><span class="sf11b2">)},</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"PSNR"</span><span class="sf11b2">: {</span><span class="sf3b2">name</span><span class="sf11b2">: </span><span class="sf3b2">psnr</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">psnr</span><span class="sf11b2">, </span><span class="sf3b2">name</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">zip</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">psnrs</span><span class="sf11b2">).</span><span class="sf8b2">tolist</span><span class="sf11b2">(), </span><span class="sf3b2">image_names</span><span class="sf11b2">)},</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"LPIPS"</span><span class="sf11b2">: {</span><span class="sf3b2">name</span><span class="sf11b2">: </span><span class="sf3b2">lp</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">lp</span><span class="sf11b2">, </span><span class="sf3b2">name</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">zip</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">lpipss</span><span class="sf11b2">).</span><span class="sf8b2">tolist</span><span class="sf11b2">(), </span><span class="sf3b2">image_names</span><span class="sf11b2">)}})</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf12b2">"LPIPS"</span><span class="sf11b2">: {</span><span class="sf3b2">name</span><span class="sf11b2">: </span><span class="sf3b2">lp</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">for</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">lp</span><span class="sf11b2">, </span><span class="sf3b2">name</span><span class="sf11b2">&nbsp;</span><span class="sf7b2">in</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">zip</span><span class="sf11b2">(</span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">tensor</span><span class="sf11b2">(</span><span class="sf3b2">lpipss</span><span class="sf11b2">).</span><span class="sf8b2">tolist</span><span class="sf11b2">(), </span><span class="sf3b2">image_names</span><span class="sf11b2">)}})</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">with</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">open</span><span class="sf11b2">(</span><span class="sf3b2">scene_dir</span><span class="sf11b2">&nbsp;+ </span><span class="sf12b2">"/results_{}.json"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">dataset</span><span class="sf11b2">), </span><span class="sf12b2">'w'</span><span class="sf11b2">) </span><span class="sf7b2">as</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">fp</span><span class="sf11b2">:</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">with</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">open</span><span class="sf11b2">(</span><span class="sf3b2">scene_dir</span><span class="sf11b2">&nbsp;+ </span><span class="sf12b2">"/results_{}.json"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">dataset</span><span class="sf11b2">), </span><span class="sf12b2">'w'</span><span class="sf11b2">) </span><span class="sf7b2">as</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">fp</span><span class="sf11b2">:</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">json</span><span class="sf11b2">.</span><span class="sf8b2">dump</span><span class="sf11b2">(</span><span class="sf3b2">full_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">], </span><span class="sf3b2">fp</span><span class="sf11b2">, </span><span class="sf3b2">indent</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">json</span><span class="sf11b2">.</span><span class="sf8b2">dump</span><span class="sf11b2">(</span><span class="sf3b2">full_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">], </span><span class="sf3b2">fp</span><span class="sf11b2">, </span><span class="sf3b2">indent</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">with</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">open</span><span class="sf11b2">(</span><span class="sf3b2">scene_dir</span><span class="sf11b2">&nbsp;+ </span><span class="sf12b2">"/per_view_{}.json"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">dataset</span><span class="sf11b2">), </span><span class="sf12b2">'w'</span><span class="sf11b2">) </span><span class="sf7b2">as</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">fp</span><span class="sf11b2">:</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf7b2">with</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">open</span><span class="sf11b2">(</span><span class="sf3b2">scene_dir</span><span class="sf11b2">&nbsp;+ </span><span class="sf12b2">"/per_view_{}.json"</span><span class="sf11b2">.</span><span class="sf21b2">format</span><span class="sf11b2">(</span><span class="sf3b2">dataset</span><span class="sf11b2">), </span><span class="sf12b2">'w'</span><span class="sf11b2">) </span><span class="sf7b2">as</span><span class="sf11b2">&nbsp;</span><span class="sf3b2">fp</span><span class="sf11b2">:</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">json</span><span class="sf11b2">.</span><span class="sf8b2">dump</span><span class="sf11b2">(</span><span class="sf3b2">per_view_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">], </span><span class="sf3b2">fp</span><span class="sf11b2">, </span><span class="sf3b2">indent</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="sf3b2">json</span><span class="sf11b2">.</span><span class="sf8b2">dump</span><span class="sf11b2">(</span><span class="sf3b2">per_view_dict</span><span class="sf11b2">[</span><span class="sf3b2">scene_dir</span><span class="sf11b2">], </span><span class="sf3b2">fp</span><span class="sf11b2">, </span><span class="sf3b2">indent</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">if</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">__name__</span><span class="sf11b2">&nbsp;== </span><span class="sf12b2">"__main__"</span><span class="sf11b2">:</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf7b2">if</span><span class="sf11b2">&nbsp;</span><span class="sf21b2">__name__</span><span class="sf11b2">&nbsp;== </span><span class="sf12b2">"__main__"</span><span class="sf11b2">:</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">device</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">device</span><span class="sf11b2">(</span><span class="sf12b2">"cuda:0"</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">device</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf8b2">device</span><span class="sf11b2">(</span><span class="sf12b2">"cuda:0"</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf3b2">cuda</span><span class="sf11b2">.</span><span class="sf8b2">set_device</span><span class="sf11b2">(</span><span class="sf3b2">device</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">torch</span><span class="sf11b2">.</span><span class="sf3b2">cuda</span><span class="sf11b2">.</span><span class="sf8b2">set_device</span><span class="sf11b2">(</span><span class="sf3b2">device</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf9b2"># Set up command line argument parser</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf9b2"># Set up command line argument parser</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">parser</span><span class="sf11b2">&nbsp;= </span><span class="sf8b2">ArgumentParser</span><span class="sf11b2">(</span><span class="sf3b2">description</span><span class="sf11b2">=</span><span class="sf12b2">"Training script parameters"</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">parser</span><span class="sf11b2">&nbsp;= </span><span class="sf8b2">ArgumentParser</span><span class="sf11b2">(</span><span class="sf3b2">description</span><span class="sf11b2">=</span><span class="sf12b2">"Training script parameters"</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">parser</span><span class="sf11b2">.</span><span class="sf8b2">add_argument</span><span class="sf11b2">(</span><span class="sf12b2">'--model_paths'</span><span class="sf11b2">, </span><span class="sf12b2">'-m'</span><span class="sf11b2">, </span><span class="sf3b2">required</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">, </span><span class="sf3b2">nargs</span><span class="sf11b2">=</span><span class="sf12b2">"+"</span><span class="sf11b2">, </span><span class="sf21b2">type</span><span class="sf11b2">=</span><span class="sf21b2">str</span><span class="sf11b2">, </span><span class="sf3b2">default</span><span class="sf11b2">=[])</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">parser</span><span class="sf11b2">.</span><span class="sf8b2">add_argument</span><span class="sf11b2">(</span><span class="sf12b2">'--model_paths'</span><span class="sf11b2">, </span><span class="sf12b2">'-m'</span><span class="sf11b2">, </span><span class="sf3b2">required</span><span class="sf11b2">=</span><span class="sf20b2">True</span><span class="sf11b2">, </span><span class="sf3b2">nargs</span><span class="sf11b2">=</span><span class="sf12b2">"+"</span><span class="sf11b2">, </span><span class="sf21b2">type</span><span class="sf11b2">=</span><span class="sf21b2">str</span><span class="sf11b2">, </span><span class="sf3b2">default</span><span class="sf11b2">=[])</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">args</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">parser</span><span class="sf11b2">.</span><span class="sf8b2">parse_args</span><span class="sf11b2">()</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf3b2">args</span><span class="sf11b2">&nbsp;= </span><span class="sf3b2">parser</span><span class="sf11b2">.</span><span class="sf8b2">parse_args</span><span class="sf11b2">()</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf8b2">evaluate</span><span class="sf11b2">(</span><span class="sf3b2">args</span><span class="sf11b2">.</span><span class="sf3b2">model_paths</span><span class="sf11b2">)</span></code></td>
+<td class="ln"></td><td class="sf3b2"><code><span class="sf11b2">&nbsp; &nbsp; </span><span class="sf8b2">evaluate</span><span class="sf11b2">(</span><span class="sf3b2">args</span><span class="sf11b2">.</span><span class="sf3b2">model_paths</span><span class="sf11b2">)</span></code></td>
+</tr>
+<tr>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+<td class="ln"></td><td class="sf3b2"><code>&nbsp;</code></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
