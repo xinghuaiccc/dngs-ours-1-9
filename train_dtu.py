@@ -11,6 +11,8 @@
 
 import os
 import torch
+import torch.fft
+import torch.nn.functional as F
 import torchvision
 from os import makedirs
 from random import randint
@@ -34,6 +36,88 @@ except ImportError:
     TENSORBOARD_FOUND = False
 
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+
+FFT_MAX_SIZE = 256
+
+def fft_loss(image, gt_image):
+    H, W = image.shape[-2], image.shape[-1]
+    max_hw = max(H, W)
+    if max_hw > FFT_MAX_SIZE:
+        scale = FFT_MAX_SIZE / float(max_hw)
+        new_h = max(16, int(round(H * scale)))
+        new_w = max(16, int(round(W * scale)))
+        image = F.interpolate(image.unsqueeze(0), size=(new_h, new_w), mode="bilinear", align_corners=False).squeeze(0)
+        gt_image = F.interpolate(gt_image.unsqueeze(0), size=(new_h, new_w), mode="bilinear", align_corners=False).squeeze(0)
+        H, W = image.shape[-2], image.shape[-1]
+
+    target_H = ((H + 31) // 32) * 32
+    target_W = ((W + 31) // 32) * 32
+
+    if H != target_H or W != target_W:
+        image_in = F.interpolate(
+            image.unsqueeze(0),
+            size=(target_H, target_W),
+            mode="bilinear",
+            align_corners=False,
+        ).squeeze(0)
+        gt_in = F.interpolate(
+            gt_image.unsqueeze(0),
+            size=(target_H, target_W),
+            mode="bilinear",
+            align_corners=False,
+        ).squeeze(0)
+    else:
+        image_in = image
+        gt_in = gt_image
+
+    try:
+        with torch.cuda.amp.autocast(enabled=False):
+            pred = image_in.float().contiguous()
+            gt = gt_in.float().contiguous()
+
+            if torch.isnan(pred).any() or torch.isinf(pred).any():
+                pred = torch.nan_to_num(pred)
+            if torch.isnan(gt).any() or torch.isinf(gt).any():
+                gt = torch.nan_to_num(gt)
+
+            fft_pred = torch.fft.rfft2(pred)
+            fft_gt = torch.fft.rfft2(gt)
+
+            amp_pred = torch.sqrt(fft_pred.real.pow(2) + fft_pred.imag.pow(2) + 1e-6)
+            amp_gt = torch.sqrt(fft_gt.real.pow(2) + fft_gt.imag.pow(2) + 1e-6)
+            loss_amp = torch.abs(amp_pred - amp_gt).mean()
+
+            loss_phase = (
+                torch.abs(fft_pred.real - fft_gt.real).mean()
+                + torch.abs(fft_pred.imag - fft_gt.imag).mean()
+            )
+
+            return loss_amp + 0.5 * loss_phase
+
+    except RuntimeError as e:
+        if not hasattr(fft_loss, "has_warned"):
+            print(
+                f"\n[Warning] GPU FFT failed ({e}), switching to CPU for this step."
+            )
+            fft_loss.has_warned = True
+
+        pred_cpu = image_in.detach().cpu().float()
+        gt_cpu = gt_in.detach().cpu().float()
+
+        fft_pred = torch.fft.rfft2(pred_cpu)
+        fft_gt = torch.fft.rfft2(gt_cpu)
+
+        amp_pred = torch.sqrt(fft_pred.real.pow(2) + fft_pred.imag.pow(2) + 1e-6)
+        amp_gt = torch.sqrt(fft_gt.real.pow(2) + fft_gt.imag.pow(2) + 1e-6)
+
+        loss_amp = torch.abs(amp_pred - amp_gt).mean()
+        loss_phase = (
+            torch.abs(fft_pred.real - fft_gt.real).mean()
+            + torch.abs(fft_pred.imag - fft_gt.imag).mean()
+        )
+
+        return (loss_amp + 0.5 * loss_phase).to(image.device)
+
 
 def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from):
     first_iter = 0
@@ -60,8 +144,10 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
     if args.dataset == 'DTU':
         patch_range = (17, 53)
+    
+    fft_weight = opt.lambda_fft
 
-    for iteration in range(first_iter, opt.iterations + 1):        
+    for iteration in range(first_iter, opt.iterations + 1):
 
         iter_start.record()
 
@@ -105,10 +191,16 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
                 depth[bg_mask] = depth[~bg_mask].mean().detach()
 
 
-            loss_l2_dpt = patch_norm_mse_loss(depth[None,...], depth_mono[None,...], randint(patch_range[0], patch_range[1]), opt.error_tolerance)
+            patch_max = min(patch_range[1], depth.shape[-2], depth.shape[-1])
+            patch_min = min(patch_range[0], patch_max)
+            patch_size = randint(patch_min, patch_max)
+            loss_l2_dpt = patch_norm_mse_loss(depth[None,...], depth_mono[None,...], patch_size, opt.error_tolerance)
             loss_hard += 0.1 * loss_l2_dpt
 
-            loss_global = patch_norm_mse_loss_global(depth[None,...], depth_mono[None,...], randint(patch_range[0], patch_range[1]), opt.error_tolerance)
+            patch_max = min(patch_range[1], depth.shape[-2], depth.shape[-1])
+            patch_min = min(patch_range[0], patch_max)
+            patch_size = randint(patch_min, patch_max)
+            loss_global = patch_norm_mse_loss_global(depth[None,...], depth_mono[None,...], patch_size, opt.error_tolerance)
             loss_hard += 1 * loss_global
 
             loss_hard.backward()
@@ -124,8 +216,10 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
 
         # -------------------------------------------------- soft --------------------------------------------
-        ema_loss_hard = 0.1 * (loss_hard.item()) + 0.9 * ema_loss_hard
-        if iteration > opt.soft_depth_start and ema_loss_hard < 0.1:
+        if iteration > opt.hard_depth_start:
+            ema_loss_hard = 0.1 * (loss_hard.item()) + 0.9 * ema_loss_hard
+            
+        if iteration > opt.soft_depth_start and (iteration <= opt.hard_depth_start or ema_loss_hard < 0.1):
             render_pkg = render_for_opa(viewpoint_cam, gaussians, pipe, background)
             viewspace_point_tensor, visibility_filter = render_pkg["viewspace_points"], render_pkg["visibility_filter"]
             depth, alpha = render_pkg["depth"], render_pkg["alpha"]
@@ -137,10 +231,16 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
                 depth_mono[bg_mask] = depth_mono[~bg_mask].mean()
                 depth[bg_mask] = depth[~bg_mask].mean().detach()
 
-            loss_l2_dpt = patch_norm_mse_loss(depth[None,...], depth_mono[None,...], randint(patch_range[0], patch_range[1]), opt.error_tolerance)
+            patch_max = min(patch_range[1], depth.shape[-2], depth.shape[-1])
+            patch_min = min(patch_range[0], patch_max)
+            patch_size = randint(patch_min, patch_max)
+            loss_l2_dpt = patch_norm_mse_loss(depth[None,...], depth_mono[None,...], patch_size, opt.error_tolerance)
             loss_soft += 0.1 * loss_l2_dpt
 
-            loss_global = patch_norm_mse_loss_global(depth[None,...], depth_mono[None,...], randint(patch_range[0], patch_range[1]), opt.error_tolerance)
+            patch_max = min(patch_range[1], depth.shape[-2], depth.shape[-1])
+            patch_min = min(patch_range[0], patch_max)
+            patch_size = randint(patch_min, patch_max)
+            loss_global = patch_norm_mse_loss_global(depth[None,...], depth_mono[None,...], patch_size, opt.error_tolerance)
             loss_soft += 1 * loss_global
 
             loss_soft.backward()
@@ -169,7 +269,18 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
         # Loss
         Ll1 = l1_loss(image, gt_image)
-        loss = Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
+        loss_fft = fft_loss(image, gt_image)
+        
+        # Entropy Loss to reduce floaters
+        opacities = gaussians.get_opacity
+        loss_entropy = -(opacities * torch.log(opacities + 1e-6) + (1 - opacities) * torch.log(1 - opacities + 1e-6)).mean()
+        
+        loss = (
+            Ll1 
+            + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
+            + fft_weight * loss_fft
+            + 0.001 * loss_entropy # Add small entropy regularization
+        )
 
         # Reg
         loss_reg = torch.tensor(0., device=loss.device)
@@ -350,8 +461,8 @@ if __name__ == "__main__":
     # parser.add_argument('--port', type=int, default=6009)
     parser.add_argument('--debug_from', type=int, default=-1)
     parser.add_argument('--detect_anomaly', action='store_true', default=False)
-    parser.add_argument("--test_iterations", nargs="+", type=int, default=[1000, 2000, 3000, 6000])
-    parser.add_argument("--save_iterations", nargs="+", type=int, default=[1000, 2000, 3000, 6000])
+    parser.add_argument("--test_iterations", nargs="+", type=int, default=[1000, 2000, 3000, 7000])
+    parser.add_argument("--save_iterations", nargs="+", type=int, default=[1000, 2000, 3000, 7000])
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[])
     parser.add_argument("--start_checkpoint", type=str, default = None)

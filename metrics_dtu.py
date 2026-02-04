@@ -65,7 +65,8 @@ def evaluate(model_paths):
         
         for test_dir in [test_dir]:
             dataset = test_dir.stem
-            for method in os.listdir(test_dir):
+            methods = [d for d in os.listdir(test_dir) if "ours" in d]
+            for method in methods:
                 print("Method:", method, dataset)
 
                 full_dict[scene_dir][method] = {}

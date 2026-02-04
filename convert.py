@@ -23,6 +23,9 @@ parser.add_argument("--camera", default="OPENCV", type=str)
 parser.add_argument("--colmap_executable", default="", type=str)
 parser.add_argument("--resize", action="store_true")
 parser.add_argument("--magick_executable", default="", type=str)
+parser.add_argument("--max_image_size", type=int, default=1600)
+parser.add_argument("--max_num_features", type=int, default=4096)
+parser.add_argument("--num_threads", type=int, default=4)
 args = parser.parse_args()
 colmap_command = '"{}"'.format(args.colmap_executable) if len(args.colmap_executable) > 0 else "colmap"
 magick_command = '"{}"'.format(args.magick_executable) if len(args.magick_executable) > 0 else "magick"
@@ -37,7 +40,10 @@ if not args.skip_matching:
         --image_path " + args.source_path + "/input \
         --ImageReader.single_camera 1 \
         --ImageReader.camera_model " + args.camera + " \
-        --SiftExtraction.use_gpu " + str(use_gpu)
+        --SiftExtraction.use_gpu " + str(use_gpu) + " \
+        --SiftExtraction.max_image_size " + str(args.max_image_size) + " \
+        --SiftExtraction.max_num_features " + str(args.max_num_features) + " \
+        --SiftExtraction.num_threads " + str(args.num_threads)
     exit_code = os.system(feat_extracton_cmd)
     if exit_code != 0:
         logging.error(f"Feature extraction failed with code {exit_code}. Exiting.")

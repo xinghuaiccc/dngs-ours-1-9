@@ -1,0 +1,114 @@
+import argparse
+import glob
+import os
+
+import numpy as np
+import torch
+import torch.nn.functional as F
+from PIL import Image
+from transformers import AutoImageProcessor, AutoModelForDepthEstimation
+
+# Set mirror for better accessibility
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+
+def iter_dtu_scenes(root_path):
+    # DTU scans as defined in scripts/run-all-dtu.sh (Verified subset)
+    scenes = [
+        "scan34", "scan41", "scan45", "scan82", "scan114", "scan31", "scan8"
+    ]
+    for scene in scenes:
+        yield os.path.join(root_path, scene)
+
+
+def collect_images(scene_path):
+    # DTU images are usually in the 'input' folder
+    patterns = [
+        os.path.join(scene_path, "input", "*.png"),
+        os.path.join(scene_path, "input", "*.jpg"),
+    ]
+    paths = []
+    for pattern in patterns:
+        paths.extend(glob.glob(pattern))
+    return sorted(paths)
+
+
+def ensure_dir(path):
+    if not os.path.exists(path):
+        os.makedirs(path, exist_ok=True)
+
+
+def preprocess_image(image, image_processor):
+    try:
+        inputs = image_processor(images=image, return_tensors="pt")
+        return inputs["pixel_values"]
+    except Exception:
+        mean = getattr(image_processor, "image_mean", [0.485, 0.456, 0.406])
+        std = getattr(image_processor, "image_std", [0.229, 0.224, 0.225])
+        target_size = getattr(image_processor, "size", {"shortest_edge": 518}).get("shortest_edge", 518)
+        image = image.copy()
+        image.thumbnail((target_size, target_size))
+        image_np = np.array(image).astype(np.float32) / 255.0
+        image_np = (image_np - mean) / std
+        image_t = torch.from_numpy(image_np).permute(2, 0, 1).unsqueeze(0)
+        return image_t
+
+
+def run_depth_anything_v2(root_path, model_id):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch_dtype = torch.float16 if device.type == "cuda" else torch.float32
+    image_processor = AutoImageProcessor.from_pretrained(model_id)
+    model = AutoModelForDepthEstimation.from_pretrained(model_id, torch_dtype=torch_dtype).to(device)
+    model.eval()
+
+    for scene_path in iter_dtu_scenes(root_path):
+        image_paths = collect_images(scene_path)
+        if not image_paths:
+            print("No images found in", scene_path)
+            continue
+
+        output_dir = os.path.join(scene_path, "depths_npy")
+        ensure_dir(output_dir)
+
+        print("Processing DTU scene:", scene_path, "images:", len(image_paths))
+        for idx, image_path in enumerate(image_paths):
+            base_name = os.path.splitext(os.path.basename(image_path))[0]
+            out_path = os.path.join(output_dir, base_name + ".npy")
+            
+            # Skip if already exists
+            if os.path.exists(out_path):
+                continue
+
+            image = Image.open(image_path).convert("RGB")
+            width, height = image.size
+
+            pixel_values = preprocess_image(image, image_processor).to(device=device, dtype=torch_dtype)
+
+            with torch.no_grad():
+                outputs = model(pixel_values)
+                pred = outputs.predicted_depth
+                pred = F.interpolate(pred.unsqueeze(1), size=(height, width), mode="bicubic", align_corners=False)
+                pred = pred.squeeze(1).squeeze(0)
+
+            depth = pred.cpu().numpy().astype(np.float32)
+            base_name = os.path.splitext(os.path.basename(image_path))[0]
+            out_path = os.path.join(output_dir, base_name + ".npy")
+            np.save(out_path, depth)
+            if idx % 50 == 0:
+                print(f"Saved: {out_path} ({idx}/{len(image_paths)})")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-r", "--root_path", type=str, required=True)
+    parser.add_argument("--model_id", type=str, default="depth-anything/Depth-Anything-V2-Small-hf")
+    args = parser.parse_args()
+
+    root_path = args.root_path
+    if not root_path.endswith("/"):
+        root_path = root_path + "/"
+
+    run_depth_anything_v2(root_path, args.model_id)
+
+
+if __name__ == "__main__":
+    main()
